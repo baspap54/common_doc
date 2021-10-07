@@ -1,6 +1,6 @@
-## Common Doctype 
+## Common Doc
 
-Common Doctype program for scrapping
+Common Doctype for scrapping
 
 #### License
 

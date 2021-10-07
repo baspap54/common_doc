@@ -9,7 +9,7 @@ from common_doc import __version__ as version
 setup(
 	name="common_doc",
 	version=version,
-	description="Common Doctype program for scrapping",
+	description="Common Doctype for scrapping",
 	author="John",
 	author_email="yuntan0@gmail.com",
 	packages=find_packages(),

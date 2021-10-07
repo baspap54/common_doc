@@ -1,9 +1,9 @@
 from . import __version__ as app_version
 
 app_name = "common_doc"
-app_title = "Common Doctype "
+app_title = "Common Doc"
 app_publisher = "John"
-app_description = "Common Doctype program for scrapping"
+app_description = "Common Doctype for scrapping"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "yuntan0@gmail.com"
