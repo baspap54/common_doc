@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{date}-{from_currency}-{to_currency}-{currency_exchange_rate_type}",
+ "creation": "2021-10-08 00:33:41.942028",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "currency_exchange_rate_type",
+  "from_currency",
+  "to_currency",
+  "rate",
+  "scale",
+  "usd_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Date",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "currency_exchange_rate_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Currency Exchange Rate Type",
+   "options": "BASE\nCAS\nCAB\nTTS\nTTB",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "from_currency",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "From Currency",
+   "options": "Currency",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "to_currency",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "To Currency",
+   "options": "Currency",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Rate"
+  },
+  {
+   "fieldname": "scale",
+   "fieldtype": "Select",
+   "label": "Scale",
+   "options": "1:1\n1:100"
+  },
+  {
+   "fieldname": "usd_rate",
+   "fieldtype": "Float",
+   "label": "USD Rate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-10-08 22:23:29.575437",
+ "modified_by": "Administrator",
+ "module": "Common Doc",
+ "name": "Currency Exchange Rate",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
