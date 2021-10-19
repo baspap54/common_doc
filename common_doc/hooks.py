@@ -117,6 +117,13 @@ app_license = "MIT"
 # 		"common_doc.tasks.monthly"
 # 	]
 # }
+scheduler_events = {
+    "cron": {
+        "00 09 * * * ": [
+            "common_doc.batch_exchange_rate.get_exchange_rate_all"
+        ]
+    }
+}
 
 # Testing
 # -------
