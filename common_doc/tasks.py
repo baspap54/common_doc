@@ -10,7 +10,31 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
 
-def get_exchange_rate_all():
+def all():
+	pass
+	# print("Scheduler started")
+	# letters = string.ascii_letters
+	# note = " ".join(random.choice(letters) for i in range(20))
+	# new_note = frappe.get_doc( {"doctype":"Note",
+	# 						"title":note
+	# 						}
+	# )
+	# new_note.insert()
+	# frappe.db.commit()
+
+def daily():
+	pass
+
+def hourly():
+	pass
+
+def weekly():
+	pass
+
+def monthly():
+	pass
+
+def cron():
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 	x = datetime.now()
 

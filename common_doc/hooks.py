@@ -100,30 +100,30 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"common_doc.tasks.all"
-# 	],
-# 	"daily": [
-# 		"common_doc.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"common_doc.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"common_doc.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"common_doc.tasks.monthly"
-# 	]
-# }
 scheduler_events = {
-    "cron": {
-        "00 09 * * * ": [
-            "common_doc.batch_exchange_rate.get_exchange_rate_all"
-        ]
-    }
+
+	"all": [
+		"common_doc.tasks.all"
+	],
+	"daily": [
+		"common_doc.tasks.daily"
+	],
+	"hourly": [
+		"common_doc.tasks.hourly"
+	],
+	"weekly": [
+		"common_doc.tasks.weekly"
+	],
+	"monthly": [
+		"common_doc.tasks.monthly"
+	],
+	"cron": {
+		"50 08 * * *": [
+			"common_doc.tasks.cron"
+		]
+	}
 }
+
 
 # Testing
 # -------
