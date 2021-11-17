@@ -8,6 +8,7 @@ common_doc/batch_exchange_rate.py
 common_doc/hooks.py
 common_doc/modules.txt
 common_doc/patches.txt
+common_doc/tasks.py
 common_doc.egg-info/PKG-INFO
 common_doc.egg-info/SOURCES.txt
 common_doc.egg-info/dependency_links.txt

@@ -1,4 +1,4 @@
-Metadata-Version: 2.1
+Metadata-Version: 1.0
 Name: common-doc
 Version: 0.0.1
 Summary: Common Doctype for scrapping
@@ -6,7 +6,5 @@ Home-page: UNKNOWN
 Author: John
 Author-email: yuntan0@gmail.com
 License: UNKNOWN
+Description: UNKNOWN
 Platform: UNKNOWN
-
-UNKNOWN
-
