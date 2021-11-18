@@ -33,15 +33,7 @@ def get_exchange_rate_all():
 		yyyy = exchange_date[0:4]
 		mm = exchange_date[5:7]
 		dd = exchange_date[8:10]
-		headers = {
-			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
-			"Content-Type": "application/xml; charset=UTF-8",
-			"Accept": "application/xml; charset=UTF-8",
-			"Accept-Encoding": "gzip, deflate, br",
-			"Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-			"Connection": "keep-alive",
-			"Host": "erp.erpnextkorea.o-r.kr",
-			"Content-Length": "257"}
+
 
 		for currency_cd in list_currency:
 			url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
@@ -56,7 +48,7 @@ def get_exchange_rate_all():
 				'requestTarget': 'searchContentDiv'
 			}
 
-			res1 = requests.post(url1,headers=headers, data=data)
+			res1 = requests.post(url1, data=data)
 			html = res1.content
 			soup = BeautifulSoup(html, 'lxml')
 			exchange_rate = 0.0
