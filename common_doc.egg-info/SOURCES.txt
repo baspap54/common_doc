@@ -25,6 +25,12 @@ common_doc/common_doc/doctype/currency_exchange_rate/currency_exchange_rate.js
 common_doc/common_doc/doctype/currency_exchange_rate/currency_exchange_rate.json
 common_doc/common_doc/doctype/currency_exchange_rate/currency_exchange_rate.py
 common_doc/common_doc/doctype/currency_exchange_rate/test_currency_exchange_rate.py
+common_doc/common_doc/doctype/papago_translate/__init__.py
+common_doc/common_doc/doctype/papago_translate/api.py
+common_doc/common_doc/doctype/papago_translate/papago_translate.js
+common_doc/common_doc/doctype/papago_translate/papago_translate.json
+common_doc/common_doc/doctype/papago_translate/papago_translate.py
+common_doc/common_doc/doctype/papago_translate/test_papago_translate.py
 common_doc/common_doc/doctype/port_code/__init__.py
 common_doc/common_doc/doctype/port_code/port_code.js
 common_doc/common_doc/doctype/port_code/port_code.json
