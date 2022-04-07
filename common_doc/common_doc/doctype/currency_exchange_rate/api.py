@@ -6,7 +6,9 @@ import random
 import string
 import requests
 import json
+import os
 from bs4 import BeautifulSoup
+import datetime
 
 def random_string(string_length=8):
 	letters = string.ascii_lowercase
@@ -157,15 +159,84 @@ def get_exchange_rate_all(**args):
 	return True
 
 @frappe.whitelist()
+def get_calendar(**args):
+	print("get_calendar")
+	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
+	now = datetime.datetime.now()
+	yyyy = now.strftime("%Y")
+	print(yyyy)
+	#yyyy="2022"
+	with open(secrets_file) as f:
+		secrets = json.load(f)
+	calendar = "en.south_korea%23holiday%40group.v.calendar.google.com"
+
+	url = "https://www.googleapis.com/calendar/v3/calendars/"+calendar+"/events?key="+secrets["google_api"]+"&orderBy=startTime&singleEvents=true&timeMin="+yyyy+"-01-01T00:00:00Z&timeMax="+yyyy+"-12-31T00:00:00Z"
+	print(url)
+
+	resp = requests.get(url)
+	if (resp.status_code == 200):
+		res = json.loads(resp.content)
+
+		for holiday in res['items']:
+			#print(holiday['summary'])
+			#print(holiday['description'])
+			#print(holiday['start']['date'])
+			#print(json.dumps(holiday['description'],ensure_ascii=False))
+			if '"Public holiday"' == json.dumps(holiday['description'],ensure_ascii=False):
+				#print(holiday['summary'])
+				#print(holiday['description'])
+				#print(holiday['start']['date'])
+				holiday_date = json.dumps(holiday['start']['date'],ensure_ascii=False).replace('\"','')
+				holiday_name = json.dumps(holiday['summary'],ensure_ascii=False).replace('\"','')
+				print(holiday_date)
+				print(holiday_name)
+				parent = frappe.get_doc("Holiday List", yyyy)
+				if frappe.db.exists("Holiday", {"holiday_date": holiday_date}):
+					print("Holiday exists")
+					docname = frappe.db.get_value("Holiday", {'holiday_date': holiday_date} ,'name')
+					#doc = frappe.get_doc({
+					#	'doctype': 'Holiday',
+					#	'holiday_date': holiday_date
+					#})
+					print(docname+":"+holiday_date)
+					frappe.db.set_value("Holiday", docname, "description", holiday_name)
+					frappe.db.commit()
+
+					#doc.db_set('description', holiday_name)
+					#parent = doc.get_parent()
+					#parent.save()
+
+				else:
+					parent.append("holidays", {
+						'holiday_date': holiday_date,
+						'description': holiday_name
+					})
+					parent.save()
+					#frappe.db.commit()
+				#child = frappe.new_doc("Holiday")
+				#child.update({'holiday_date': holiday_date ,'description': holiday_name ,'parent': parent.name , 'parenttype':'Holiday List' , 'parentfield': 'holidays'})
+				#parent.holidays.append(child)
+
+		#print(res['items']['summary'][1])
+		#print(res)
+		##for key, value in resp.json()['summary'].items():
+		##	print(key)
+		##	print(value)
+
+
+@frappe.whitelist()
 def get_exchoverseas(**args):
 	print("get_exchange_rate_overseas")
 	#print(args)
 	exchange_date = args.get('exchange_date')
 	from_currency = args.get('from_currency')
 	to_currency = args.get('to_currency')
+	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
+	with open(secrets_file) as f:
+		secrets = json.load(f)
 	currency_exchange_rate_type = args.get('currency_exchange_rate_type')
 	#exchange-rates.abstractapi.com/v1/historical/?api_key=440774db353c4c3abf0602b65e50991c&base=USD&date=2020-08-31
-	url = "http://exchange-rates.abstractapi.com/v1/historical/?api_key=440774db353c4c3abf0602b65e50991c&base="+to_currency+"&date="+exchange_date
+	url = "http://exchange-rates.abstractapi.com/v1/historical/?api_key="+secrets["overseas_exchange_rate"]+"&base="+to_currency+"&date="+exchange_date
 
 	resp = requests.get(url)
 	#resp = requests.get(url)

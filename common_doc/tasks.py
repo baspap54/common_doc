@@ -105,6 +105,8 @@ def cron():
 				create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_ttb, usd_rate)
 
 
+
+
 def create_exchange_rate(curr_date , currency_cd , mrate):
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 	ex_exists = frappe.db.exists({
