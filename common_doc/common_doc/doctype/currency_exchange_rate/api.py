@@ -168,8 +168,9 @@ def get_calendar(**args):
 	#yyyy="2022"
 	with open(secrets_file) as f:
 		secrets = json.load(f)
-	calendar = "en.south_korea%23holiday%40group.v.calendar.google.com"
-
+	#calendar = "en.south_korea%23holiday%40group.v.calendar.google.com"
+	calendar = "qansohiecib58ga9k1bmppvt5oi65b1q%40import.calendar.google.com"
+	#qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com
 	url = "https://www.googleapis.com/calendar/v3/calendars/"+calendar+"/events?key="+secrets["google_api"]+"&orderBy=startTime&singleEvents=true&timeMin="+yyyy+"-01-01T00:00:00Z&timeMax="+yyyy+"-12-31T00:00:00Z"
 	print(url)
 
@@ -182,7 +183,7 @@ def get_calendar(**args):
 			#print(holiday['description'])
 			#print(holiday['start']['date'])
 			#print(json.dumps(holiday['description'],ensure_ascii=False))
-			if '"Public holiday"' == json.dumps(holiday['description'],ensure_ascii=False):
+			#if '"Public holiday"' == json.dumps(holiday['description'],ensure_ascii=False):
 				#print(holiday['summary'])
 				#print(holiday['description'])
 				#print(holiday['start']['date'])
