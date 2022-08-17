@@ -22,6 +22,7 @@ common_doc/common_doc/doctype/__init__.py
 common_doc/common_doc/doctype/attendees/__init__.py
 common_doc/common_doc/doctype/attendees/attendees.json
 common_doc/common_doc/doctype/attendees/attendees.py
+common_doc/common_doc/doctype/currency_exchange_rate/._currency_exchange_rate.js
 common_doc/common_doc/doctype/currency_exchange_rate/__init__.py
 common_doc/common_doc/doctype/currency_exchange_rate/api.py
 common_doc/common_doc/doctype/currency_exchange_rate/currency_exchange_rate.js
@@ -56,3 +57,4 @@ common_doc/config/desktop.py
 common_doc/config/docs.py
 common_doc/templates/__init__.py
 common_doc/templates/pages/__init__.py
+common_doc/templates/pages/__pycache__/__init__.py

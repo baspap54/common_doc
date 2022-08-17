@@ -23,11 +23,11 @@ def get_exchange_rate(**args):
 	currency_exchange_rate_type = args.get('currency_exchange_rate_type')
 
 	yyyymmdd = exchange_date[0:10]
-	print(yyyymmdd)
+	# print(yyyymmdd)
 	yyyy = exchange_date[0:4]
 	mm = exchange_date[5:7]
 	dd = exchange_date[8:10]
-	print(yyyy + mm + dd)
+	# print(yyyy + mm + dd)
 
 
 	url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
@@ -90,8 +90,8 @@ def get_exchange_rate(**args):
 
 #		exchange_rate = td_tag.text.strip()
 
-	print(args)
-	print(exchange_doc)
+	# print(args)
+	# print(exchange_doc)
 	return exchange_doc
 
 @frappe.whitelist()
@@ -142,7 +142,7 @@ def get_exchange_rate_all(**args):
 		usd_rate = 0.0
 		usd_rate = list_td[10].text.strip()
 
-		print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
+		# print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
 		exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
 		exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
 		exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
@@ -155,7 +155,7 @@ def get_exchange_rate_all(**args):
 			create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_tts, usd_rate)
 			create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_ttb, usd_rate)
 
-	print(args)
+	# print(args)
 	return True
 
 @frappe.whitelist()
@@ -164,7 +164,7 @@ def get_calendar(**args):
 	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
 	now = datetime.datetime.now()
 	yyyy = now.strftime("%Y")
-	print(yyyy)
+	# print(yyyy)
 	#yyyy="2022"
 	with open(secrets_file) as f:
 		secrets = json.load(f)
@@ -172,7 +172,7 @@ def get_calendar(**args):
 	calendar = "qansohiecib58ga9k1bmppvt5oi65b1q%40import.calendar.google.com"
 	#qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com
 	url = "https://www.googleapis.com/calendar/v3/calendars/"+calendar+"/events?key="+secrets["google_api"]+"&orderBy=startTime&singleEvents=true&timeMin="+yyyy+"-01-01T00:00:00Z&timeMax="+yyyy+"-12-31T00:00:00Z"
-	print(url)
+	# print(url)
 
 	resp = requests.get(url)
 	if (resp.status_code == 200):
@@ -189,17 +189,17 @@ def get_calendar(**args):
 				#print(holiday['start']['date'])
 				holiday_date = json.dumps(holiday['start']['date'],ensure_ascii=False).replace('\"','')
 				holiday_name = json.dumps(holiday['summary'],ensure_ascii=False).replace('\"','')
-				print(holiday_date)
-				print(holiday_name)
+				# print(holiday_date)
+				# print(holiday_name)
 				parent = frappe.get_doc("Holiday List", yyyy)
 				if frappe.db.exists("Holiday", {"holiday_date": holiday_date}):
-					print("Holiday exists")
+					# print("Holiday exists")
 					docname = frappe.db.get_value("Holiday", {'holiday_date': holiday_date} ,'name')
 					#doc = frappe.get_doc({
 					#	'doctype': 'Holiday',
 					#	'holiday_date': holiday_date
 					#})
-					print(docname+":"+holiday_date)
+					# print(docname+":"+holiday_date)
 					frappe.db.set_value("Holiday", docname, "description", holiday_name)
 					frappe.db.commit()
 
@@ -227,7 +227,7 @@ def get_calendar(**args):
 
 @frappe.whitelist()
 def get_exchoverseas(**args):
-	print("get_exchange_rate_overseas")
+	# print("get_exchange_rate_overseas")
 	#print(args)
 	exchange_date = args.get('exchange_date')
 	from_currency = args.get('from_currency')
@@ -238,7 +238,6 @@ def get_exchoverseas(**args):
 	currency_exchange_rate_type = args.get('currency_exchange_rate_type')
 	#exchange-rates.abstractapi.com/v1/historical/?api_key=440774db353c4c3abf0602b65e50991c&base=USD&date=2020-08-31
 	url = "http://exchange-rates.abstractapi.com/v1/historical/?api_key="+secrets["overseas_exchange_rate"]+"&base="+to_currency+"&date="+exchange_date
-
 	resp = requests.get(url)
 	#resp = requests.get(url)
 	if (resp.status_code == 200):
@@ -277,7 +276,7 @@ def create_exchange_rate(curr_date , currency_cd , mrate):
 		'to_currency': 'KRW'
 	})
 	if not ex_exists:
-		print("create  " + curr_date + " " + currency_cd + " " + mrate)
+		# print("create  " + curr_date + " " + currency_cd + " " + mrate)
 		exchange_doc = frappe.new_doc('Currency Exchange')
 		exchange_doc.date = curr_date
 		exchange_doc.from_currency = currency_cd
@@ -300,7 +299,7 @@ def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , curre
 		'to_currency': 'KRW'
 	})
 	if not ex_exists:
-		print("create  " + curr_date + " " + currency_cd + " " + mrate)
+		# print("create  " + curr_date + " " + currency_cd + " " + mrate)
 		exchange_doc = frappe.new_doc('Currency Exchange Rate')
 		exchange_doc.currency_exchange_rate_type = currency_exchange_rate_type
 		exchange_doc.date = curr_date
@@ -313,6 +312,3 @@ def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , curre
 			exchange_doc.scale = "1:1"
 		exchange_doc.usd_rate = usd_rate
 		exchange_doc.insert()
-
-
-
