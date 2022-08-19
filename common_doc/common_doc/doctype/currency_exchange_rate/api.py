@@ -159,17 +159,32 @@ def get_exchange_rate_all(**args):
 	return True
 
 @frappe.whitelist()
-def get_calendar(**args):
-	print("get_calendar")
+def get_calendar(**kwargs):
+	# print("get_calendar")
+	country_cd = kwargs.get('country_cd')
+	cal_year = kwargs.get('year')
 	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
 	now = datetime.datetime.now()
-	yyyy = now.strftime("%Y")
-	# print(yyyy)
+	yyyy = ""
+	if cal_year=="":
+		yyyy = now.strftime("%Y")
+	else :
+		yyyy= cal_year
+	# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.get_calendar --kwargs "{'country_cd':'KR','year':'2022'}"
 	#yyyy="2022"
 	with open(secrets_file) as f:
 		secrets = json.load(f)
 	#calendar = "en.south_korea%23holiday%40group.v.calendar.google.com"
-	calendar = "qansohiecib58ga9k1bmppvt5oi65b1q%40import.calendar.google.com"
+	us_calendar = "6lqpbv8647igscie1ictda2c57nigmcn%40import.calendar.google.com"
+	kr_calendar ="qansohiecib58ga9k1bmppvt5oi65b1q%40import.calendar.google.com"
+	ca_calendar ="9c3j4oiq948vs1pdehn7j7k93ipn0lm9@import.calendar.google.com"
+	calendar = ""
+	if country_cd == 'KR':
+		calendar = kr_calendar
+	elif country_cd == 'US':
+		calendar = us_calendar
+	elif country_cd == 'CA':
+		calendar = ca_calendar
 	#qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com
 	url = "https://www.googleapis.com/calendar/v3/calendars/"+calendar+"/events?key="+secrets["google_api"]+"&orderBy=startTime&singleEvents=true&timeMin="+yyyy+"-01-01T00:00:00Z&timeMax="+yyyy+"-12-31T00:00:00Z"
 	# print(url)
@@ -178,7 +193,7 @@ def get_calendar(**args):
 	if (resp.status_code == 200):
 		res = json.loads(resp.content)
 		# company_abbr = frappe.db.get_value('Company', frappe.defaults.get_user_default('Company'), 'abbr')
-		country_cd = frappe.get_system_settings('country') 
+		# country_cd = frappe.get_system_settings('country') 
 		parent = frappe.get_doc("Holiday List", yyyy+country_cd)
 		for holiday in res['items']:
 			#print(holiday['summary'])
