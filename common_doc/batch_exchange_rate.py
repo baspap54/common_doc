@@ -15,7 +15,7 @@ def get_exchange_rate_all():
 	x = datetime.now()
 
 	exchange_date = str(x)
-	print("Background job Exchange Rate is started")
+	# print("Background job Exchange Rate is started")
 
 	ex_exists = frappe.db.exists({
 		'doctype': 'Currency Exchange Rate',
@@ -69,7 +69,7 @@ def get_exchange_rate_all():
 			usd_rate = 0.0
 			usd_rate = list_td[10].text.strip()
 
-			print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
+			# print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
 			exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
 			exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
 			exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
@@ -92,7 +92,7 @@ def create_exchange_rate(curr_date , currency_cd , mrate):
 		'to_currency': 'KRW'
 	})
 	if not ex_exists:
-		print("create  " + curr_date + " " + currency_cd + " " + mrate)
+		# print("create  " + curr_date + " " + currency_cd + " " + mrate)
 		exchange_doc = frappe.new_doc('Currency Exchange')
 		exchange_doc.date = curr_date
 		exchange_doc.from_currency = currency_cd
@@ -115,7 +115,7 @@ def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , curre
 		'to_currency': 'KRW'
 	})
 	if not ex_exists:
-		print("create  " + curr_date + " " + currency_cd + " " + mrate)
+		# print("create  " + curr_date + " " + currency_cd + " " + mrate)
 		exchange_doc = frappe.new_doc('Currency Exchange Rate')
 		exchange_doc.currency_exchange_rate_type = currency_exchange_rate_type
 		exchange_doc.date = curr_date

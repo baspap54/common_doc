@@ -177,7 +177,9 @@ def get_calendar(**args):
 	resp = requests.get(url)
 	if (resp.status_code == 200):
 		res = json.loads(resp.content)
-
+		# company_abbr = frappe.db.get_value('Company', frappe.defaults.get_user_default('Company'), 'abbr')
+		country_cd = frappe.get_system_settings('country') 
+		parent = frappe.get_doc("Holiday List", yyyy+country_cd)
 		for holiday in res['items']:
 			#print(holiday['summary'])
 			#print(holiday['description'])
@@ -191,7 +193,7 @@ def get_calendar(**args):
 				holiday_name = json.dumps(holiday['summary'],ensure_ascii=False).replace('\"','')
 				# print(holiday_date)
 				# print(holiday_name)
-				parent = frappe.get_doc("Holiday List", yyyy)
+				
 				if frappe.db.exists("Holiday", {"holiday_date": holiday_date}):
 					# print("Holiday exists")
 					docname = frappe.db.get_value("Holiday", {'holiday_date': holiday_date} ,'name')
