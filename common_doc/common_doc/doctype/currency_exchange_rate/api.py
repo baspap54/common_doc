@@ -161,6 +161,8 @@ def get_exchange_rate_all(**args):
 @frappe.whitelist()
 def get_calendar(**kwargs):
 	# print("get_calendar")
+	print(kwargs)
+	cal_year = ""
 	country_cd = kwargs.get('country_cd')
 	cal_year = kwargs.get('year')
 	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
@@ -187,7 +189,7 @@ def get_calendar(**kwargs):
 		calendar = ca_calendar
 	#qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com
 	url = "https://www.googleapis.com/calendar/v3/calendars/"+calendar+"/events?key="+secrets["google_api"]+"&orderBy=startTime&singleEvents=true&timeMin="+yyyy+"-01-01T00:00:00Z&timeMax="+yyyy+"-12-31T00:00:00Z"
-	# print(url)
+	print(url)
 
 	resp = requests.get(url)
 	if (resp.status_code == 200):
