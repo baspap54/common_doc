@@ -179,4 +179,6 @@ user_data_fields = [
 # auth_hooks = [
 # 	"common_doc.auth.validate"
 # ]
-
+fixtures=[
+    "Client Script"	
+]
