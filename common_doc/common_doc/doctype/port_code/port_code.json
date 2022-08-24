@@ -24,13 +24,13 @@
   "latitude",
   "longitude",
   "description",
+  "coordinates",
   "status"
  ],
  "fields": [
   {
    "fieldname": "country",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Country",
    "options": "Country",
@@ -59,7 +59,13 @@
   {
    "fieldname": "port_name",
    "fieldtype": "Data",
-   "label": "Port Name"
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Port Name",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "use_yn",
@@ -139,12 +145,18 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nAA\nAC\nAF\nAI\nAS\nRL\nRN\nRQ\nRR\nQQ\nXX"
+   "options": "\nAA\nAC\nAF\nAI\nAS\nAM\nAQ\nRL\nRN\nRQ\nRR\nQQ\nUR\nXX"
+  },
+  {
+   "fieldname": "coordinates",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coordinates"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-23 18:45:50.867341",
+ "modified": "2022-08-23 22:53:15.538869",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Port Code",
