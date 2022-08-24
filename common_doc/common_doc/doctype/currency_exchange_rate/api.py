@@ -364,8 +364,12 @@ def get_unlocode_port(**kwargs):
 				Longitude = Longitude_degree
 				if Latitude_minute >0 :
 					Latitude += Latitude_minute/60
+				if list_td[9].get_text()[4:5] == 'S':
+					Latitude = Latitude *(-1)
 				if Longitude_minute >0 :
 					Longitude += Longitude_minute/60
+				if list_td[9].get_text()[11:12] =='W':
+					Longitude = Longitude * (-1)
 
 				
 				# print(list_td[1].get_text()[0:2]+list_td[1].get_text()[4:7]+list_td[6].get_text()+list_td[9].get_text())
