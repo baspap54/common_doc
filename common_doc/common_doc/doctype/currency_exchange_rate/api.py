@@ -274,19 +274,81 @@ def get_calendar(**kwargs):
 		##	print(key)
 		##	print(value)
 
-# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.def get_unlocode_port --args "{'country_cd':'KR','year':'2022'}"
+# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.get_unlocode_port --kwargs "{'country_cd':'KR','year':'2022'}"
 
 @frappe.whitelist()
-def get_unlocode_port(**args):
-	print(args)
-	url = 'https://service.unece.org/trade/locode/kr.htm'
+def get_unlocode_port(**kwargs):
+	print(kwargs)
+	url = 'https://service.unece.org/trade/locode/sg.htm'
 	res = requests.get(url)
 	html = res.content
 	soup = BeautifulSoup(html, 'lxml')
 	# list_tr = soup.find_all(name="tr", attrs={"class": "txtAr"})
 	list_tr = soup.find_all(name="tr")
+	# print(len(list_tr))
 	for tr_el in list_tr:
-		print(tr_el)
+		list_td = tr_el.find_all(name='td',attrs={"height": "1","valign":"Top"})
+		if len(list_td)==11:
+			port_doc = frappe.new_doc('Port Code')
+			port_doc.country_code = list_td[1].get_text()[0:2]
+			port_doc.port_code = list_td[1].get_text()[4:7]
+			port_doc.port_name = list_td[2].get_text()
+			port_doc.iata = list_td[8].get_text()
+			if list_td[5].get_text()[0:1] == '1':	
+				port_doc.sea_port = 1
+			else:
+				port_doc.sea_port = 0
+			
+			if list_td[5].get_text()[1:2] == '2':
+				port_doc.rail_terminal = 1
+			else:
+				port_doc.rail_terminal = 0
+
+			if list_td[5].get_text()[2:3] == '3':
+				port_doc.road_terminal = 1
+			else:
+				port_doc.road_terminal = 0
+
+			if list_td[5].get_text()[3:4] == '4':
+				port_doc.airport = 1
+			else:
+				port_doc.airport = 0
+
+			if list_td[5].get_text()[4:5] == '5':
+				port_doc.postal_exchange_office = 1
+			else:
+				port_doc.postal_exchange_office = 0
+
+			if list_td[5].get_text()[5:6] == '6':
+				port_doc.mulitmodal_functions = 1
+			else:
+				port_doc.mulitmodal_functions = 0
+
+			if list_td[5].get_text()[6:7] == '7':
+				port_doc.fixed_transport_functions = 1
+			else:
+				port_doc.fixed_transport_functions = 0
+
+			if list_td[5].get_text()[7:8] == 'B':
+				port_doc.border_crossing = 1
+			else:
+				port_doc.border_crossing = 0
+
+			port_doc.status = list_td[6].get_text()
+			port_doc.iata = list_td[8].get_text()
+
+			if list_td[6].get_text()[0.1] == 'A':
+				port_doc.use_yn ='Y'
+			# port_doc.latitude
+			# port_doc.longitude
+			port_doc.description = list_td[10].get_text()
+			port_doc.country = frappe.db.get_value('Country',{'code':list_td[1].get_text()[0:2]},'country_name')
+			
+			print(list_td[1].get_text()[0:2]+list_td[1].get_text()[4:7]) 
+			# SG  BKM 
+		# for td_el in list_td:
+		# 	# print(td_el.get_text())
+		# 	print(td_el)
 
 @frappe.whitelist()
 def get_exchoverseas(**args):

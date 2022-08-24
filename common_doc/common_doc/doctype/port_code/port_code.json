@@ -11,6 +11,7 @@
   "country_code",
   "port_code",
   "port_name",
+  "iata",
   "sea_port",
   "rail_terminal",
   "road_terminal",
@@ -23,7 +24,7 @@
   "latitude",
   "longitude",
   "description",
-  "iata_yn"
+  "status"
  ],
  "fields": [
   {
@@ -130,15 +131,20 @@
    "label": "Border crossing"
   },
   {
-   "fieldname": "iata_yn",
+   "fieldname": "iata",
+   "fieldtype": "Data",
+   "label": "IATA"
+  },
+  {
+   "fieldname": "status",
    "fieldtype": "Select",
-   "label": "IATA YN",
-   "options": "Y\nN"
+   "label": "Status",
+   "options": "\nAA\nAC\nAF\nAI\nAS\nRL\nRN\nRQ\nRR\nQQ\nXX"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-23 00:01:33.457668",
+ "modified": "2022-08-23 18:45:50.867341",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Port Code",
