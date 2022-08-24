@@ -11,21 +11,30 @@
   "country_code",
   "port_code",
   "port_name",
+  "column_break_5",
   "iata",
+  "status",
+  "use_yn",
+  "port_type_section",
   "sea_port",
   "rail_terminal",
+  "column_break_12",
   "road_terminal",
   "airport",
+  "column_break_15",
   "postal_exchange_office",
   "mulitmodal_functions",
+  "column_break_18",
   "fixed_transport_functions",
   "border_crossing",
-  "use_yn",
+  "location_section",
   "latitude",
+  "column_break_23",
   "longitude",
-  "description",
+  "column_break_25",
   "coordinates",
-  "status"
+  "remark_section",
+  "description"
  ],
  "fields": [
   {
@@ -41,9 +50,9 @@
    "fetch_from": "country.code",
    "fieldname": "country_code",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Country Code",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -152,11 +161,50 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Coordinates"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "port_type_section",
+   "fieldtype": "Section Break",
+   "label": "Port Type"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_25",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remark_section",
+   "fieldtype": "Section Break",
+   "label": "Remark"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-23 22:53:15.538869",
+ "modified": "2022-08-24 00:22:16.688607",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Port Code",
