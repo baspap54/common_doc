@@ -177,9 +177,19 @@ def get_calendar(**kwargs):
 	with open(secrets_file) as f:
 		secrets = json.load(f)
 	#calendar = "en.south_korea%23holiday%40group.v.calendar.google.com"
-	us_calendar = "6lqpbv8647igscie1ictda2c57nigmcn%40import.calendar.google.com"
-	kr_calendar ="qansohiecib58ga9k1bmppvt5oi65b1q%40import.calendar.google.com"
+	# us_calendar = "6lqpbv8647igscie1ictda2c57nigmcn%40import.calendar.google.com"
+	us_calendar ="q5fg70p4b6ob7u9uutc11q24obnba58r@import.calendar.google.com"
+	kr_calendar ="qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com"
 	ca_calendar ="9c3j4oiq948vs1pdehn7j7k93ipn0lm9@import.calendar.google.com"
+	jp_calendar ="35vbnbma3dqftptpk9l6is0qlo8sbokv@import.calendar.google.com"
+	cn_calendar ="bse1jchv6hhvl1vuod9jsndg9b2cl9in@import.calendar.google.com"
+	tw_calendar ="2r3ti5fg54f9oehuti8eh08bg2a4uccp@import.calendar.google.com"
+	uk_calendar ="gmr65g9mg9r9fiutrmbekhg5iogd14ph@import.calendar.google.com"
+	de_calendar ="9997ebqspr9tn8fdeqppcu1iubh1k6t0@import.calendar.google.com"
+	fr_calendar ="ubbdc8md7qv9fnocl0seltd4or26c8c4@import.calendar.google.com"
+	es_calendar = "t9foe6skmt8akshqb35r9v6j77k68td1@import.calendar.google.com"
+	id_calendar = "e5vp7lg6egtbq5nlg72248usu2tbkvc4@import.calendar.google.com"
+
 	calendar = ""
 	if country_cd == 'KR':
 		calendar = kr_calendar
@@ -187,7 +197,24 @@ def get_calendar(**kwargs):
 		calendar = us_calendar
 	elif country_cd == 'CA':
 		calendar = ca_calendar
-	#qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com
+	elif country_cd == 'JP':
+		calendar = jp_calendar
+	elif country_cd == 'CN':
+		calendar = cn_calendar
+	elif country_cd == 'TW':
+		calendar = tw_calendar
+	elif country_cd == 'UK':
+		calendar = uk_calendar
+	elif country_cd == 'DE':
+		calendar = de_calendar
+	elif country_cd == 'FR':
+		calendar = fr_calendar	
+	elif country_cd == 'ES':
+		calendar = es_calendar
+	elif country_cd == 'ID':
+		calendar = id_calendar
+	
+	# qansohiecib58ga9k1bmppvt5oi65b1q@import.calendar.google.com
 	url = "https://www.googleapis.com/calendar/v3/calendars/"+calendar+"/events?key="+secrets["google_api"]+"&orderBy=startTime&singleEvents=true&timeMin="+yyyy+"-01-01T00:00:00Z&timeMax="+yyyy+"-12-31T00:00:00Z"
 	# print(url)
 
@@ -196,8 +223,10 @@ def get_calendar(**kwargs):
 		res = json.loads(resp.content)
 		# company_abbr = frappe.db.get_value('Company', frappe.defaults.get_user_default('Company'), 'abbr')
 		# country_cd = frappe.get_system_settings('country') 
-		parent = frappe.get_doc("Holiday List", yyyy+country_cd)
-		for holiday in res['items']:
+		ex_exists = frappe.db.exists('Holiday List',yyyy+country_cd)
+		if  ex_exists:
+			parent = frappe.get_doc("Holiday List", yyyy+country_cd)
+			for holiday in res['items']:
 			#print(holiday['summary'])
 			#print(holiday['description'])
 			#print(holiday['start']['date'])
@@ -236,6 +265,8 @@ def get_calendar(**kwargs):
 				#child = frappe.new_doc("Holiday")
 				#child.update({'holiday_date': holiday_date ,'description': holiday_name ,'parent': parent.name , 'parenttype':'Holiday List' , 'parentfield': 'holidays'})
 				#parent.holidays.append(child)
+		else:
+			cal_doc = frappe.new_doc("Holiday List", yyyy+country_cd)
 
 		#print(res['items']['summary'][1])
 		#print(res)
@@ -243,6 +274,19 @@ def get_calendar(**kwargs):
 		##	print(key)
 		##	print(value)
 
+# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.def get_unlocode_port --args "{'country_cd':'KR','year':'2022'}"
+
+@frappe.whitelist()
+def get_unlocode_port(**args):
+	print(args)
+	url = 'https://service.unece.org/trade/locode/kr.htm'
+	res = requests.get(url)
+	html = res.content
+	soup = BeautifulSoup(html, 'lxml')
+	# list_tr = soup.find_all(name="tr", attrs={"class": "txtAr"})
+	list_tr = soup.find_all(name="tr")
+	for tr_el in list_tr:
+		print(tr_el)
 
 @frappe.whitelist()
 def get_exchoverseas(**args):
@@ -255,7 +299,6 @@ def get_exchoverseas(**args):
 	with open(secrets_file) as f:
 		secrets = json.load(f)
 	currency_exchange_rate_type = args.get('currency_exchange_rate_type')
-	#exchange-rates.abstractapi.com/v1/historical/?api_key=440774db353c4c3abf0602b65e50991c&base=USD&date=2020-08-31
 	url = "http://exchange-rates.abstractapi.com/v1/historical/?api_key="+secrets["overseas_exchange_rate"]+"&base="+to_currency+"&date="+exchange_date
 	resp = requests.get(url)
 	#resp = requests.get(url)

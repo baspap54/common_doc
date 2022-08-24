@@ -10,13 +10,20 @@
   "country",
   "country_code",
   "port_code",
-  "port_type",
   "port_name",
+  "sea_port",
+  "rail_terminal",
+  "road_terminal",
+  "airport",
+  "postal_exchange_office",
+  "mulitmodal_functions",
+  "fixed_transport_functions",
+  "border_crossing",
   "use_yn",
-  "location",
   "latitude",
   "longitude",
-  "description"
+  "description",
+  "iata_yn"
  ],
  "fields": [
   {
@@ -65,17 +72,6 @@
    "label": "Description"
   },
   {
-   "fieldname": "port_type",
-   "fieldtype": "Select",
-   "label": "Port Type",
-   "options": "Air\nSea"
-  },
-  {
-   "fieldname": "location",
-   "fieldtype": "Geolocation",
-   "label": "Location"
-  },
-  {
    "fieldname": "latitude",
    "fieldtype": "Float",
    "label": "Latitude"
@@ -84,14 +80,69 @@
    "fieldname": "longitude",
    "fieldtype": "Float",
    "label": "Longitude"
+  },
+  {
+   "default": "0",
+   "fieldname": "sea_port",
+   "fieldtype": "Check",
+   "label": "Sea Port"
+  },
+  {
+   "default": "0",
+   "fieldname": "rail_terminal",
+   "fieldtype": "Check",
+   "label": "Rail Terminal"
+  },
+  {
+   "default": "0",
+   "fieldname": "road_terminal",
+   "fieldtype": "Check",
+   "label": "Road Terminal"
+  },
+  {
+   "default": "0",
+   "fieldname": "airport",
+   "fieldtype": "Check",
+   "label": "Airport"
+  },
+  {
+   "default": "0",
+   "fieldname": "postal_exchange_office",
+   "fieldtype": "Check",
+   "label": "Postal exchange office"
+  },
+  {
+   "default": "0",
+   "fieldname": "mulitmodal_functions",
+   "fieldtype": "Check",
+   "label": "Mulitmodal functions"
+  },
+  {
+   "default": "0",
+   "fieldname": "fixed_transport_functions",
+   "fieldtype": "Check",
+   "label": "Fixed transport functions"
+  },
+  {
+   "default": "0",
+   "fieldname": "border_crossing",
+   "fieldtype": "Check",
+   "label": "Border crossing"
+  },
+  {
+   "fieldname": "iata_yn",
+   "fieldtype": "Select",
+   "label": "IATA YN",
+   "options": "Y\nN"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-10-13 23:16:08.727931",
+ "modified": "2022-08-23 00:01:33.457668",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Port Code",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -121,5 +172,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
