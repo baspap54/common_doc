@@ -48,61 +48,99 @@ def cron():
 	})
 
 	if not ex_exists:
-		list_currency = ['USD', 'JPY', 'EUR', 'CNY', 'HKD', 'THB', 'TWD', 'PHP', 'SGD', 'AUD', 'VND', 'GBP', 'CAD', 'MYR',
-						 'RUB', 'ZAR', 'NOK', 'NZD', 'DKK', 'MXN', 'MNT', 'BHD', 'BDT', 'BRL', 'BND', 'SAR', 'LKR', 'SEK',
-						 'CHF', 'AED', 'DZD', 'OMR', 'JOD', 'ILS', 'EGP', 'INR', 'IDR', 'CZK', 'CLP', 'KZT', 'QAR', 'KES',
-						 'COP', 'KWD', 'TZS', 'TRY', 'PKR', 'PLN', 'HUF']
+		# list_currency = ['USD', 'JPY', 'EUR', 'CNY', 'HKD', 'THB', 'TWD', 'PHP', 'SGD', 'AUD', 'VND', 'GBP', 'CAD', 'MYR',
+		# 				 'RUB', 'ZAR', 'NOK', 'NZD', 'DKK', 'MXN', 'MNT', 'BHD', 'BDT', 'BRL', 'BND', 'SAR', 'LKR', 'SEK',
+		# 				 'CHF', 'AED', 'DZD', 'OMR', 'JOD', 'ILS', 'EGP', 'INR', 'IDR', 'CZK', 'CLP', 'KZT', 'QAR', 'KES',
+		# 				 'COP', 'KWD', 'TZS', 'TRY', 'PKR', 'PLN', 'HUF']
 
 		yyyymmdd = exchange_date[0:10]
 		yyyy = exchange_date[0:4]
 		mm = exchange_date[5:7]
 		dd = exchange_date[8:10]
 
-		for currency_cd in list_currency:
-			url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
-			data = {
-				'ajax': 'true',
-				'curCd': currency_cd,
-				'tmpInqStrDt': yyyymmdd,
-				'pbldDvCd': '1',
-				'pbldSqn': '',
-				'inqStrDt': yyyy + mm + dd,
-				'inqKindCd': '1',
-				'requestTarget': 'searchContentDiv'
-			}
-			res1 = requests.post(url1, data=data)
-			html = res1.content
-			soup = BeautifulSoup(html, 'lxml')
-			exchange_rate = 0.0
-			list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
+		# for currency_cd in list_currency:
+		url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
+		data = {
+			'ajax': 'true',
+			'curCd': '',
+			'tmpInqStrDt': yyyymmdd,
+			'pbldDvCd': '1',
+			'pbldSqn': '',
+			'inqStrDt': yyyy + mm + dd,
+			'inqKindCd': '1',
+			'requestTarget': 'searchContentDiv'
+		}
+		res1 = requests.post(url1, data=data)
+		html = res1.content
+		soup = BeautifulSoup(html, 'lxml')
+		exchange_rate = 0.0
+
+		exchange_rate = 0.0
+		# list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
+		list_tr = soup.find_all(name='tr')	
+		exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
+		exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
+		exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
+		currency_cd = ''
+		for tr_el in list_tr:
+			list_td = tr_el.find_all(name='td', attrs={"class": "txtAr"})
+			list_header = tr_el.find_all(name='td', attrs={"class": "tc"})
+			if len(list_td)==11:
+				
+				if list_header[0].get_text().strip()[-3:] != '00)':
+					currency_cd = list_header[0].get_text().strip()[-3:] 
+				else :
+					currency_cd = (list_header[0].get_text().strip()[-9:])[0:3]
+				exchange_rate = list_td[8].text.strip()	
+					##CAB
+				exchange_rate_cab = list_td[0].text.strip()
+					##CAS
+				exchange_rate_cas = list_td[2].text.strip()
+					##TTS
+				exchange_rate_tts = list_td[5].text.strip()
+					##TTB
+				exchange_rate_ttb = list_td[4].text.strip()	
+				usd_rate = 0.0
+				usd_rate = list_td[10].text.strip()
+				# print(exyyyy+exmm+exdd+'---'+ currency_cd + list_td[0].get_text())
+
+				if locale.atof(exchange_rate) > 0:
+					create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd, exchange_rate)
+					create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate,	usd_rate)
+					create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cab, usd_rate)
+					create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cas, usd_rate)
+					create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_tts, usd_rate)
+					create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_ttb, usd_rate)
+		
+		# list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
 
 
-			##BASE
-			exchange_rate = list_td[8].text.strip()
-			##CAB
-			exchange_rate_cab = list_td[0].text.strip()
-			##CAS
-			exchange_rate_cas = list_td[2].text.strip()
-			##TTS
-			exchange_rate_tts = list_td[5].text.strip()
-			##TTB
-			exchange_rate_ttb = list_td[4].text.strip()
+		# 	##BASE
+		# 	exchange_rate = list_td[8].text.strip()
+		# 	##CAB
+		# 	exchange_rate_cab = list_td[0].text.strip()
+		# 	##CAS
+		# 	exchange_rate_cas = list_td[2].text.strip()
+		# 	##TTS
+		# 	exchange_rate_tts = list_td[5].text.strip()
+		# 	##TTB
+		# 	exchange_rate_ttb = list_td[4].text.strip()
 
-			usd_rate = 0.0
-			usd_rate = list_td[10].text.strip()
+		# 	usd_rate = 0.0
+		# 	usd_rate = list_td[10].text.strip()
 
-			# print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
-			exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
-			exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
-			exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
+		# 	# print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
+		# 	exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
+		# 	exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
+		# 	exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
 
-			if locale.atof(exchange_rate) > 0:
-				create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd, exchange_rate)
-				create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate,	usd_rate)
-				create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cab, usd_rate)
-				create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cas, usd_rate)
-				create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_tts, usd_rate)
-				create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_ttb, usd_rate)
+		# 	if locale.atof(exchange_rate) > 0:
+		# 		create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd, exchange_rate)
+		# 		create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate,	usd_rate)
+		# 		create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cab, usd_rate)
+		# 		create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cas, usd_rate)
+		# 		create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_tts, usd_rate)
+		# 		create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_ttb, usd_rate)
 
 
 
