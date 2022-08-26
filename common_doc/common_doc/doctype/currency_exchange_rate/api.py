@@ -5,11 +5,13 @@ import frappe
 import random
 import string
 import requests
+import subprocess
 import json
 import os
 from bs4 import BeautifulSoup
 # from pyproj import Proj,transform
 import datetime
+import time
 
 def random_string(string_length=8):
 	letters = string.ascii_lowercase
@@ -99,6 +101,7 @@ def get_exchange_rate(**args):
 def get_exchange_rate_all(**args):
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 	exchange_date = args.get('exchange_date')
+	# print(exchange_date)
 	# list_currency = ['USD', 'JPY', 'EUR', 'CNY', 'HKD', 'THB', 'TWD', 'PHP', 'SGD', 'AUD', 'VND', 'GBP', 'CAD', 'MYR',
 	# 				 'RUB', 'ZAR', 'NOK', 'NZD', 'DKK', 'MXN', 'MNT', 'BHD', 'BDT', 'BRL', 'BND', 'SAR', 'LKR', 'SEK',
 	# 				 'CHF', 'AED', 'DZD', 'OMR', 'JOD', 'ILS', 'EGP', 'INR', 'IDR', 'CZK', 'CLP', 'KZT', 'QAR', 'KES',
@@ -155,12 +158,12 @@ def get_exchange_rate_all(**args):
 			# print(exyyyy+exmm+exdd+'---'+ currency_cd + list_td[0].get_text())
 
 			if locale.atof(exchange_rate) > 0:
-				create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd, exchange_rate)
-				create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate,	usd_rate)
-				create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cab, usd_rate)
-				create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_cas, usd_rate)
-				create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_tts, usd_rate)
-				create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, exchange_rate_ttb, usd_rate)
+				create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd,'KRW' ,exchange_rate)
+				create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate,	usd_rate)
+				create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cab, usd_rate)
+				create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cas, usd_rate)
+				create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_tts, usd_rate)
+				create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_ttb, usd_rate)
 	return True
 
 	# 	# print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
@@ -394,6 +397,7 @@ def get_unlocode_port(**kwargs):
 				# print("["+list_td[9].text.strip()+"]")  
 				# print(Latitude)
 				# print(Longitude)
+				port_doc.location = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":['+Longitude +','+Latitude +']}}]}'
 			port_doc.latitude = Latitude
 			port_doc.longitude = Longitude
 			
@@ -449,48 +453,112 @@ def get_exchoverseas(**args):
 	#	print(resp)
 	return True
 
-def create_exchange_rate(curr_date , currency_cd , mrate):
+def create_exchange_rate(curr_date , fr_currency_cd ,to_currency_cd, mrate):
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 	ex_exists = frappe.db.exists({
 		'doctype': 'Currency Exchange',
 		'date': curr_date,
-		'from_currency': currency_cd,
-		'to_currency': 'KRW'
+		'from_currency': fr_currency_cd,
+		'to_currency': to_currency_cd
 	})
 	if not ex_exists:
 		# print("create  " + curr_date + " " + currency_cd + " " + mrate)
 		exchange_doc = frappe.new_doc('Currency Exchange')
 		exchange_doc.date = curr_date
-		exchange_doc.from_currency = currency_cd
-		exchange_doc.to_currency = "KRW"
-		if currency_cd == "JPY" or currency_cd == "VND" or currency_cd == "IDR":
-			exchange_doc.exchange_rate = locale.atof(mrate)/100
-		else:
-			exchange_doc.exchange_rate = mrate
+		exchange_doc.from_currency = fr_currency_cd
+		exchange_doc.to_currency = to_currency_cd
+		exchange_doc.exchange_rate = mrate
+		if to_currency_cd == "KRW" :  
+			if fr_currency_cd == "JPY" or fr_currency_cd == "VND" or fr_currency_cd == "IDR":
+				exchange_doc.exchange_rate = locale.atof(mrate)/100
 		exchange_doc.for_buying = 1
 		exchange_doc.for_selling = 1
 		exchange_doc.insert()
 
-def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , currency_cd , mrate ,usd_rate):
+def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , fr_currency_cd ,to_currency_cd, mrate ,usd_rate):
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 	ex_exists = frappe.db.exists({
 		'doctype': 'Currency Exchange Rate',
 		'currency_exchange_rate_type': currency_exchange_rate_type,
 		'date': curr_date,
-		'from_currency': currency_cd,
-		'to_currency': 'KRW'
+		'from_currency': fr_currency_cd,
+		'to_currency': to_currency_cd
 	})
 	if not ex_exists:
 		# print("create  " + curr_date + " " + currency_cd + " " + mrate)
 		exchange_doc = frappe.new_doc('Currency Exchange Rate')
 		exchange_doc.currency_exchange_rate_type = currency_exchange_rate_type
 		exchange_doc.date = curr_date
-		exchange_doc.from_currency = currency_cd
-		exchange_doc.to_currency = "KRW"
+		exchange_doc.from_currency = fr_currency_cd
+		exchange_doc.to_currency = to_currency_cd
 		exchange_doc.rate = mrate
-		if currency_cd == "JPY" or currency_cd == "VND" or currency_cd == "IDR":
-			exchange_doc.scale = "1:100"
-		else:
-			exchange_doc.scale = "1:1"
+		exchange_doc.scale = "1:1"
+
+		if to_currency_cd == "KRW" :  
+			if fr_currency_cd == "JPY" or fr_currency_cd == "VND" or fr_currency_cd == "IDR" :
+				exchange_doc.scale = "1:100"
+			else:
+				exchange_doc.scale = "1:1"
 		exchange_doc.usd_rate = usd_rate
 		exchange_doc.insert()
+
+# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.import_canada_exchange_rate --kwargs "{'exchange_date':'2022-08-25'}"
+@frappe.whitelist()
+def import_canada_exchange_rate(**kwargs):
+	exchange_date = kwargs.get('exchange_date')
+	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+	if not exchange_date:
+		x = datetime.now()
+		exchange_date = str(x)
+	runwget_exchange(exchange_date)
+	time.sleep(3)  # File download wait 3 seconds
+	read_exchange_rate(exchange_date)
+	move_json(exchange_date)
+
+	
+
+
+	
+def read_exchange_rate(date):
+	
+	file_path = 'ca_exchange_rate/'+date+'.json'
+	with open(file_path, 'r') as file :
+		data = json.load(file)
+		for exchange_data in data['observations'] :
+			# print(exchange_data['d'])
+			for ex_key in exchange_data.keys():
+				if ex_key != 'd':
+					# print(ex_key[-6:][0:3]+exchange_data[ex_key]['v'])
+					create_exchange_rate(exchange_data['d'], ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
+
+		# print(data)
+
+def runwget():
+	# runcmd('pwd', verbose = True)
+	runcmd('wget https://www.bankofcanada.ca/valet/observations/group/FX_RATES_DAILY/json?start_date=2017-01-03', verbose = True)
+	runcmd("mv 'json?start_date=2017-01-03' ca_exchange_rate/2017-01-03.json",verbose = True)
+
+def move_json(date):
+	runcmd("mv ca_exchange_rate/"+date+".json  ca_exchange_rate/complete/"+date+".json",verbose = True)
+
+def runwget_exchange(date):
+	# runcmd('pwd', verbose = True)
+	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+	if not date: 
+		x = datetime.now()
+		date = str(x)
+	runcmd('wget https://www.bankofcanada.ca/valet/observations/group/FX_RATES_DAILY/json?start_date='+date, verbose = True)
+	runcmd("mv 'json?start_date='"+date+ " ca_exchange_rate/"+date+".json",verbose = True)
+
+def runcmd(cmd, verbose = False, *args, **kwargs):
+    process = subprocess.Popen(
+        cmd,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
+        text = True,
+        shell = True
+    )
+    std_out, std_err = process.communicate()
+    if verbose:
+        print(std_out.strip(), std_err)
+    pass
