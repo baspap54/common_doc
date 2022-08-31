@@ -12,6 +12,7 @@
   "title",
   "port_code",
   "port_name",
+  "sub_div",
   "column_break_5",
   "iata",
   "status",
@@ -218,11 +219,19 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Title"
+  },
+  {
+   "fieldname": "sub_div",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sub Div"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-30 20:55:59.245789",
+ "modified": "2022-08-31 00:54:49.850355",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Port Code",
