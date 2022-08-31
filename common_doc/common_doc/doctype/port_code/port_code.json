@@ -9,6 +9,7 @@
  "field_order": [
   "country",
   "country_code",
+  "title",
   "port_code",
   "port_name",
   "column_break_5",
@@ -211,11 +212,17 @@
    "fieldname": "location",
    "fieldtype": "Geolocation",
    "label": "Location"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Title"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-24 00:30:37.658629",
+ "modified": "2022-08-30 20:55:59.245789",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Port Code",
@@ -252,6 +259,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "port_name",
+ "title_field": "title",
  "track_changes": 1
 }

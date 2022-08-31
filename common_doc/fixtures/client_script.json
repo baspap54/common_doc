@@ -2,6 +2,17 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
+  "dt": "Opportunity Item",
+  "enabled": 0,
+  "modified": "2022-08-30 19:31:21.811882",
+  "module": "Fns Crm Enhancement",
+  "name": "Port Code validate",
+  "script": "frappe.ui.form.on('Opportunity Item', {\n\trefresh(frm) {\n\t\t// your code here\n\t\tfrm.set_query(\"pol\", function() {\n\t\t\treturn {\n\t\t\t\tfilters: {\"use_yn\": 'Y'}\n\t\t\t}\n\t\t});\n\t}\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
   "dt": "Report For Decision",
   "enabled": 1,
   "modified": "2022-06-30 22:07:41.743556",
@@ -30,6 +41,28 @@
   "module": "Common Doc",
   "name": "Get Holiday API",
   "script": "frappe.ui.form.on('Holiday List', {\n\trefresh: function(frm) {\n\t\t// your code here\n\t\tfrm.add_custom_button(__('From Google Calendar'),function(){\n\t\t    \n\t\t    //common_doc.common_doc.doctype.currency_exchange_rate.api.get_calendar \n\t\t    \n            let docname = frm.selected_doc.name;\n            let country_cd = docname.substring(4,6);\n            let year = docname.substring(0,4);\n            \n            frappe.call({\n\t\t\t\tmethod: \"common_doc.common_doc.doctype.currency_exchange_rate.api.get_calendar?country_cd=\"+country_cd+\"&year=\"+year, //dotted path to server method\n\t\t\t\tkwargs: {\n\t\t\t\t\t'country_cd':country_cd,\n\t\t\t\t\t'year' : year\n\t\t\t\t},\n\t\t\t\tcallback: function(r) {\n\t\t\t\t\tconsole.log(r)\n\t\t\t\t\t//cur_frm.exchange_rate = r.message.exchange_rate;\n\t\t\t\t\tif(r.message) {\n\t\t\t\t\t\t// code snippet\n\t\t\t\t\t\t//frappe.msgprint();\n\t\t\t\t\t\tfrappe.msgprint({\n\t\t\t\t\t\t\ttitle: __('Public holiday created'),\n\t\t\t\t\t\t\tmessage: __('Public holiday created'),\n\t\t\t\t\t\t\tindicator: 'orange'\n\t\t\t\t\t\t});\n\t\t\t\t\t\t//frm.selected_doc.exchange_rate = r.message.exchange_rate;\n\n\t\t\t\t\t\treturn;\n\t\t\t\t\t\t//cur_frm.set_value('exchange_rate',r.message.exchange_rate);\n\t\t\t\t\t\t//cur_frm.exchange_rate = r.message.exchange_rate;\n\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t})\n\t\t    \n\t\t}, __(\"Get Holiday\")    );\n\t}\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Opportunity",
+  "enabled": 1,
+  "modified": "2022-08-30 20:43:30.369084",
+  "module": "Fns Crm Enhancement",
+  "name": "Port Code Validation",
+  "script": "frappe.ui.form.on('Opportunity', {\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Quotation",
+  "enabled": 1,
+  "modified": "2022-08-30 20:59:17.430996",
+  "module": "Fns Crm Enhancement",
+  "name": "Port Code Validation for Quotation",
+  "script": "frappe.ui.form.on('Quotation', {\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n})",
   "view": "Form"
  }
 ]
