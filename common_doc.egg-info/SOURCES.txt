@@ -15,6 +15,17 @@ common_doc.egg-info/dependency_links.txt
 common_doc.egg-info/not-zip-safe
 common_doc.egg-info/top_level.txt
 common_doc/common_doc/__init__.py
+common_doc/common_doc/custom/allowed_to_transact_with.json
+common_doc/common_doc/custom/country.json
+common_doc/common_doc/custom/customer_credit_limit.json
+common_doc/common_doc/custom/item.json
+common_doc/common_doc/custom/item_barcode.json
+common_doc/common_doc/custom/item_customer_detail.json
+common_doc/common_doc/custom/item_default.json
+common_doc/common_doc/custom/item_tax.json
+common_doc/common_doc/custom/party_account.json
+common_doc/common_doc/custom/sales_team.json
+common_doc/common_doc/custom/uom_conversion_detail.json
 common_doc/common_doc/dashboard_chart_source/__init__.py
 common_doc/common_doc/dashboard_chart_source/currency_exchange_rate/__init__.py
 common_doc/common_doc/dashboard_chart_source/currency_exchange_rate/currency_exchange_rate.js
