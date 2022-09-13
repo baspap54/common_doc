@@ -115,57 +115,58 @@ def get_exchange_rate_all(**args):
 	#bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.get_exchange_rate_all --kwargs "{'exchange_date':'2022-08-25'}"
 	#https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do?ajax=true&curCd=&tmpInqStrDt=2022-08-25&pbldDvCd=1&pbldSqn=&inqStrDt=20220825&inqKindCd=1&requestTarget=searchContentDiv
 	# for currency_cd in list_currency:
-	url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
-	data = {
-			'ajax': 'true',
-			'curCd': '',
-			'tmpInqStrDt': yyyymmdd,
-			'pbldDvCd': '1',
-			'pbldSqn': '',
-			'inqStrDt': yyyy + mm + dd,
-			'inqKindCd': '1',
-			'requestTarget': 'searchContentDiv'
-	}
-	res1 = requests.post(url1, data=data)
-	html = res1.content
-	soup = BeautifulSoup(html, 'lxml')
-	exchange_rate = 0.0
-	# list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
-	list_tr = soup.find_all(name='tr')	
-	exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
-	exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
-	exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
-	currency_cd = ''
-	for tr_el in list_tr:
-		list_td = tr_el.find_all(name='td', attrs={"class": "txtAr"})
-		list_header = tr_el.find_all(name='td', attrs={"class": "tc"})
-		if len(list_td)==11:
-			
-			if list_header[0].get_text().strip()[-3:] != '00)':
-				currency_cd = list_header[0].get_text().strip()[-3:] 
-			else :
-				currency_cd = (list_header[0].get_text().strip()[-9:])[0:3]
-			exchange_rate = list_td[8].text.strip()	
-				##CAB
-			exchange_rate_cab = list_td[0].text.strip()
-				##CAS
-			exchange_rate_cas = list_td[2].text.strip()
-				##TTS
-			exchange_rate_tts = list_td[5].text.strip()
-				##TTB
-			exchange_rate_ttb = list_td[4].text.strip()	
-			usd_rate = 0.0
-			usd_rate = list_td[10].text.strip()
-			# print(exyyyy+exmm+exdd+'---'+ currency_cd + list_td[0].get_text())
+	if datetime(int(yyyy),int(mm),int(dd),0,0).weekday() <5 :
+		url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
+		data = {
+				'ajax': 'true',
+				'curCd': '',
+				'tmpInqStrDt': yyyymmdd,
+				'pbldDvCd': '1',
+				'pbldSqn': '',
+				'inqStrDt': yyyy + mm + dd,
+				'inqKindCd': '1',
+				'requestTarget': 'searchContentDiv'
+		}
+		res1 = requests.post(url1, data=data)
+		html = res1.content
+		soup = BeautifulSoup(html, 'lxml')
+		exchange_rate = 0.0
+		# list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
+		list_tr = soup.find_all(name='tr')	
+		exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
+		exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
+		exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
+		currency_cd = ''
+		for tr_el in list_tr:
+			list_td = tr_el.find_all(name='td', attrs={"class": "txtAr"})
+			list_header = tr_el.find_all(name='td', attrs={"class": "tc"})
+			if len(list_td)==11:
+				
+				if list_header[0].get_text().strip()[-3:] != '00)':
+					currency_cd = list_header[0].get_text().strip()[-3:] 
+				else :
+					currency_cd = (list_header[0].get_text().strip()[-9:])[0:3]
+				exchange_rate = list_td[8].text.strip()	
+					##CAB
+				exchange_rate_cab = list_td[0].text.strip()
+					##CAS
+				exchange_rate_cas = list_td[2].text.strip()
+					##TTS
+				exchange_rate_tts = list_td[5].text.strip()
+					##TTB
+				exchange_rate_ttb = list_td[4].text.strip()	
+				usd_rate = 0.0
+				usd_rate = list_td[10].text.strip()
+				# print(exyyyy+exmm+exdd+'---'+ currency_cd + list_td[0].get_text())
 
-			if locale.atof(exchange_rate) > 0:
-				create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd,'KRW' ,exchange_rate)
-				create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate,	usd_rate)
-				create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cab, usd_rate)
-				create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cas, usd_rate)
-				create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_tts, usd_rate)
-				create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_ttb, usd_rate)
-	return True
+				if locale.atof(exchange_rate) > 0:
+					create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd,'KRW' ,exchange_rate)
+					create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate,	usd_rate)
+					create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cab, usd_rate)
+					create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cas, usd_rate)
+					create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_tts, usd_rate)
+					create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_ttb, usd_rate)
+		return True
 
 	# 	# print(((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())
 
@@ -189,7 +190,7 @@ def get_calendar(**kwargs):
 	country_cd = kwargs.get('country_cd')
 	cal_year = kwargs.get('year')
 	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
-	now = datetime.datetime.now()
+	now = datetime.now()
 	yyyy = ""
 	if cal_year=="":
 		yyyy = now.strftime("%Y")
@@ -648,13 +649,12 @@ def runcmd(cmd, verbose = False, *args, **kwargs):
     pass
 
 def date_loop():
-	start = '2018-01-01'
+	start = '2020-01-01'
 	end = '2020-12-31'
 	start_date = datetime.strptime(start,"%Y-%m-%d")
 	end_date = datetime.strptime(end,"%Y-%m-%d")
 	while start_date <= end_date:
 		dates = start_date.strftime("%Y-%m-%d")
-		print(dates)
 		locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 		yyyymmdd = dates[0:10]
 		yyyy = dates[0:4]
@@ -663,57 +663,56 @@ def date_loop():
 		#bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.get_exchange_rate_all --kwargs "{'exchange_date':'2022-08-25'}"
 		#https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do?ajax=true&curCd=&tmpInqStrDt=2022-08-25&pbldDvCd=1&pbldSqn=&inqStrDt=20220825&inqKindCd=1&requestTarget=searchContentDiv
 		# for currency_cd in list_currency:
-		url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
-		data = {
-				'ajax': 'true',
-				'curCd': '',
-				'tmpInqStrDt': yyyymmdd,
-				'pbldDvCd': '1',
-				'pbldSqn': '',
-				'inqStrDt': yyyy + mm + dd,
-				'inqKindCd': '1',
-				'requestTarget': 'searchContentDiv'
-		}
-		res1 = requests.post(url1, data=data)
-		html = res1.content
-		soup = BeautifulSoup(html, 'lxml')
-		exchange_rate = 0.0
-		# list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
-		list_tr = soup.find_all(name='tr')	
-		exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
-		exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
-		exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
-		currency_cd = ''
-		for tr_el in list_tr:
-			list_td = tr_el.find_all(name='td', attrs={"class": "txtAr"})
-			list_header = tr_el.find_all(name='td', attrs={"class": "tc"})
-			if len(list_td)==11:
-				
-				if list_header[0].get_text().strip()[-3:] != '00)':
-					currency_cd = list_header[0].get_text().strip()[-3:] 
-				else :
-					currency_cd = (list_header[0].get_text().strip()[-9:])[0:3]
-				exchange_rate = list_td[8].text.strip()	
-					##CAB
-				exchange_rate_cab = list_td[0].text.strip()
-					##CAS
-				exchange_rate_cas = list_td[2].text.strip()
-					##TTS
-				exchange_rate_tts = list_td[5].text.strip()
-					##TTB
-				exchange_rate_ttb = list_td[4].text.strip()	
-				usd_rate = 0.0
-				usd_rate = list_td[10].text.strip()
-				# print(exyyyy+exmm+exdd+'---'+ currency_cd + list_td[0].get_text())
+		if datetime(int(yyyy),int(mm),int(dd),0,0).weekday() <5 :
+			print(dates)
+			url1 = 'https://www.kebhana.com/cms/rate/wpfxd651_01i_01.do'
+			data = {
+					'ajax': 'true',
+					'curCd': '',
+					'tmpInqStrDt': yyyymmdd,
+					'pbldDvCd': '1',
+					'pbldSqn': '',
+					'inqStrDt': yyyy + mm + dd,
+					'inqKindCd': '1',
+					'requestTarget': 'searchContentDiv'
+			}
+			res1 = requests.post(url1, data=data)
+			html = res1.content
+			soup = BeautifulSoup(html, 'lxml')
+			exchange_rate = 0.0
+			# list_td = soup.find_all(name="td", attrs={"class": "txtAr"})
+			list_tr = soup.find_all(name='tr')	
+			exyyyy = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[0:4]
+			exmm = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[5:7]
+			exdd = (((soup.find_all(name="span", attrs={"class": "fl"}))[0].find_all(name="strong")[0]).text.strip())[8:10]
+			currency_cd = ''
+			for tr_el in list_tr:
+				list_td = tr_el.find_all(name='td', attrs={"class": "txtAr"})
+				list_header = tr_el.find_all(name='td', attrs={"class": "tc"})
+				if len(list_td)==11:
+					
+					if list_header[0].get_text().strip()[-3:] != '00)':
+						currency_cd = list_header[0].get_text().strip()[-3:] 
+					else :
+						currency_cd = (list_header[0].get_text().strip()[-9:])[0:3]
+					exchange_rate = list_td[8].text.strip()	
+						##CAB
+					exchange_rate_cab = list_td[0].text.strip()
+						##CAS
+					exchange_rate_cas = list_td[2].text.strip()
+						##TTS
+					exchange_rate_tts = list_td[5].text.strip()
+						##TTB
+					exchange_rate_ttb = list_td[4].text.strip()	
+					usd_rate = 0.0
+					usd_rate = list_td[10].text.strip()
+					# print(exyyyy+exmm+exdd+'---'+ currency_cd + list_td[0].get_text())
 
-				if locale.atof(exchange_rate) > 0:
-					create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd,'KRW' ,exchange_rate)
-					create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate,	usd_rate)
-					create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cab, usd_rate)
-					create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cas, usd_rate)
-					create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_tts, usd_rate)
-					create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_ttb, usd_rate)
-		
-
-
+					if locale.atof(exchange_rate) > 0:
+						create_exchange_rate(exyyyy+"-"+exmm+"-"+exdd, currency_cd,'KRW' ,exchange_rate)
+						create_currency_exchange_rate('BASE', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate,	usd_rate)
+						create_currency_exchange_rate('CAB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cab, usd_rate)
+						create_currency_exchange_rate('CAS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_cas, usd_rate)
+						create_currency_exchange_rate('TTS', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_tts, usd_rate)
+						create_currency_exchange_rate('TTB', exyyyy + "-" + exmm + "-" + exdd, currency_cd, 'KRW' ,exchange_rate_ttb, usd_rate)
 		start_date += timedelta(days=1)

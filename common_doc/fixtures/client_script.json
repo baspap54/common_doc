@@ -64,5 +64,16 @@
   "name": "Port Code Validation for Quotation",
   "script": "frappe.ui.form.on('Quotation', {\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n})",
   "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Order",
+  "enabled": 1,
+  "modified": "2022-09-05 17:31:23.437232",
+  "module": "Fns Crm Enhancement",
+  "name": "Port Code Validation for Sales order",
+  "script": "frappe.ui.form.on('Sales Order', {\n\t\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n})",
+  "view": "Form"
  }
 ]
