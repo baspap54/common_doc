@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from email import header
 
 import locale
 import frappe
@@ -722,7 +723,7 @@ def date_loop():
 
 @frappe.whitelist()
 def get_tax_info(**args):
-	# print(args)
+	print(args)
 	bizno=  re.sub("\-", "",  args.get('bizno'))
 	dongCode= bizno[3:5]
 	country_code = args.get('country_code')
@@ -732,54 +733,88 @@ def get_tax_info(**args):
 	yyyymmdd = x_str[0:10]
 	
 	if country_code == "KR" or country_code == "kr":
-		url = "https://teht.hometax.go.kr/wqAction.do?actionId=ATTABZAA001R08&screenId=UTEABAAA13&popupYn=false&realScreenId="
-		request = urllib.request.Request(url)
-        #request.add_header("X-Naver-Client-Id", client_id)
-		request.add_header("Accept", "application/xml; charset=UTF-8")
-		request.add_header("Accept-Encoding", "gzip, deflate, br")
-		request.add_header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
-		request.add_header("Connection", "keep-alive")
-		request.add_header("Content-Length", "257")
-		request.add_header("Content-Type", "application/xml; charset=UTF-8")
-		request.add_header("Host", "teht.hometax.go.kr")
-		request.add_header("Origin", "https://teht.hometax.go.kr")
-		request.add_header("Referer", "https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/ab/a/a/UTEABAAA13.xml")
-		request.add_header("Sec-Fetch-Mode", "cors")
-		request.add_header("Sec-Fetch-Site", "same-origin")
-		request.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36")
-		CRLF = "\n"
-		data=""
-		data= "<map id=\"ATTABZAA001R08\">" + CRLF
-		data+=" <pubcUserNo/>" + CRLF
-		data+=" <mobYn>N</mobYn>" + CRLF
-		data+=" <inqrTrgtClCd>1</inqrTrgtClCd>" + CRLF
-		data+=" <txprDscmNo>" + bizno + "</txprDscmNo>" + CRLF
-		data+=" <dongCode>" + dongCode + "</dongCode>" + CRLF
-		data+=" <psbSearch>Y</psbSearch>" + CRLF
-		data+=" <map id=\"userReqInfoVO\"/>" + CRLF
-		data+="</map>" + CRLF
-		response = urllib.request.urlopen(request, data=data.encode("utf-8"))
-		rescode = response.getcode()
+		# url = "https://teht.hometax.go.kr/wqAction.do?actionId=ATTABZAA001R08&screenId=UTEABAAA13&popupYn=false&realScreenId="
+		# request = urllib.request.Request(url)
+        # #request.add_header("X-Naver-Client-Id", client_id)
+		# request.add_header("Accept", "application/xml; charset=UTF-8")
+		# request.add_header("Accept-Encoding", "gzip, deflate, br")
+		# request.add_header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+		# request.add_header("Connection", "keep-alive")
+		# request.add_header("Content-Length", "257")
+		# request.add_header("Content-Type", "application/xml; charset=UTF-8")
+		# request.add_header("Host", "teht.hometax.go.kr")
+		# request.add_header("Origin", "https://teht.hometax.go.kr")
+		# request.add_header("Referer", "https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/ab/a/a/UTEABAAA13.xml")
+		# request.add_header("Sec-Fetch-Mode", "cors")
+		# request.add_header("Sec-Fetch-Site", "same-origin")
+		# request.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36")
+		# CRLF = "\n"
+		# data=""
+		# data= "<map id=\"ATTABZAA001R08\">" + CRLF
+		# data+=" <pubcUserNo/>" + CRLF
+		# data+=" <mobYn>N</mobYn>" + CRLF
+		# data+=" <inqrTrgtClCd>1</inqrTrgtClCd>" + CRLF
+		# data+=" <txprDscmNo>" + bizno + "</txprDscmNo>" + CRLF
+		# data+=" <dongCode>" + dongCode + "</dongCode>" + CRLF
+		# data+=" <psbSearch>Y</psbSearch>" + CRLF
+		# data+=" <map id=\"userReqInfoVO\"/>" + CRLF
+		# data+="</map>" + CRLF
+		
+		# response = urllib.request.urlopen(request, data=data.encode("utf-8"))
+		# rescode = response.getcode()
+
+		secrets_file = os.path.join(os.getcwd(), 'secrets.json')
+		with open(secrets_file) as f:
+			secrets = json.load(f)
+		public_data_bizno_key = secrets["public_data_bizno"]
+		url = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey="+public_data_bizno_key+"&dataType=JSON"
+		payload = json.dumps({
+		"b_no": [
+			bizno
+			]
+		})
+		headers = {
+		'contentType': 'application/json',
+		'accept': 'application/json',
+		'Content-Type': 'application/json'
+		}
+
+		response = requests.request("POST", url, headers=headers, data=payload)
+
+		# print(response.text)
+		# rescode = response.getcode()
 
         # print(docname)
         # credit_check1 = frappe.get_doc('Credit Check',docname)
-		if (rescode == 200):
-			response_body = response.read().decode("utf-8")
+		if (response.status_code == 200):
+			res = json.loads(response.content)
+			# print(json.dumps(res['data'][0]['b_no']))
+			# response_body = response.read().decode("utf-8")
 			# print(response_body)
-			soup = BeautifulSoup(response_body, "xml")
-			smpcbmantrtcntn = (soup.find_all(name="smpcBmanTrtCntn"))[0].text.strip()
-			smpcbmanengltrtcntn = (soup.find_all(name="smpcBmanEnglTrtCntn"))[0].text.strip()
-			trtcntn = (soup.find_all(name="trtCntn"))[0].text.strip()
-			nrgtTxprYn = (soup.find_all(name="nrgtTxprYn"))[0].text.strip()
+			# soup = BeautifulSoup(response_body, "xml")
+			# smpcbmantrtcntn = (soup.find_all(name="smpcBmanTrtCntn"))[0].text.strip()
+			# smpcbmanengltrtcntn = (soup.find_all(name="smpcBmanEnglTrtCntn"))[0].text.strip()
+			# trtcntn = (soup.find_all(name="trtCntn"))[0].text.strip()
+			# nrgtTxprYn = (soup.find_all(name="nrgtTxprYn"))[0].text.strip()
+			# customer_doc = frappe.new_doc('Customer')
+			# # print(smpcbmantrtcntn+"\n"+trtcntn+"\n"+nrgtTxprYn+"\n"+smpcbmanengltrtcntn)
+			# customer_doc.home_tax_msg = smpcbmanengltrtcntn
+			# customer_doc.tax_id = bizno
+			# customer_doc.taxation_type = trtcntn
+			# customer_doc.home_tax_date = yyyymmdd
+			# customer_doc.home_tax_yn = nrgtTxprYn
+
+
 			customer_doc = frappe.new_doc('Customer')
-			# print(smpcbmantrtcntn+"\n"+trtcntn+"\n"+nrgtTxprYn+"\n"+smpcbmanengltrtcntn)
-			customer_doc.home_tax_msg = smpcbmanengltrtcntn
-			customer_doc.tax_id = bizno
-			customer_doc.taxation_type = trtcntn
+			# customer_doc.home_tax_msg = json.dumps(res['data'][0]['b_stt'],ensure_ascii=False)
+			customer_doc.home_tax_msg = res['data'][0]['b_stt']
+			# customer_doc.tax_id = json.dumps(res['data'][0]['b_no'],ensure_ascii=False)
+			customer_doc.tax_id = res['data'][0]['b_no']
+			# customer_doc.taxation_type = json.dumps(res['data'][0]['tax_type'],ensure_ascii=False)
+			customer_doc.taxation_type = res['data'][0]['tax_type'] 
 			customer_doc.home_tax_date = yyyymmdd
-			customer_doc.home_tax_yn = nrgtTxprYn
-            # credit_check1.smpcbmantrtcntn = smpcbmantrtcntn
-            # credit_check1.trtcntn = trtcntn
-            # credit_check1.base_date = yyyymmdd
-            # credit_check1.bzno = bizno
+			# customer_doc.home_tax_yn = json.dumps(res['data'][0]['utcc_yn'],ensure_ascii=False)
+			customer_doc.home_tax_yn =  res['data'][0]['utcc_yn']
+
+
 	return customer_doc
