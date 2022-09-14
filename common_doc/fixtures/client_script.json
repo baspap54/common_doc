@@ -2,23 +2,12 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
-  "dt": "Opportunity Item",
-  "enabled": 0,
-  "modified": "2022-08-30 19:31:21.811882",
-  "module": "Fns Crm Enhancement",
-  "name": "Port Code validate",
-  "script": "frappe.ui.form.on('Opportunity Item', {\n\trefresh(frm) {\n\t\t// your code here\n\t\tfrm.set_query(\"pol\", function() {\n\t\t\treturn {\n\t\t\t\tfilters: {\"use_yn\": 'Y'}\n\t\t\t}\n\t\t});\n\t}\n})",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Report For Decision",
+  "dt": "Customer",
   "enabled": 1,
-  "modified": "2022-06-30 22:07:41.743556",
-  "module": null,
-  "name": "Report For Decision-Form",
-  "script": "frappe.ui.form.on('Report For Decision', {\n\trefresh: function(frm) {\n        \n\t\t//frm.set_df_property('ibsn', 'read_only', !frm.is_new());\n        //msgprint(frm.is_new() ? 0 : 1);\n        //frm.set_value(\"draft_employee\", frappe.get_value('Employee',{'user_id':frappe.session.user},'name'));\n        \n        //doc_manual = frappe.get_doc(\"Employee\", \"42275\");\n        //console.log(doc_manual);\n        //msgprint(doc_manual.name);\n        //msgprint(frm.is_new())\n        //frm.set_value(\"draft_user\", frappe.session.user);\n        //frm.set_value(\"company\", frappe.session.company);\n        //frm.set_value(\"draft_date\", frappe.datetime.nowdate());\n        \n        //frm.set_df_property('draft_user', 'read_only', frm.is_new() ? 1 : 0);\n        \n        \n    }\n\n})",
+  "modified": "2022-09-13 18:28:41.016325",
+  "module": "Common Doc",
+  "name": "Customer Button",
+  "script": "frappe.ui.form.on('Customer', {\n\trefresh: function(frm) {\n\t\t// your code here\n\t\tif (frm.selected_doc.country_code == 'KR' ||  frm.selected_doc.country_code == 'kr'){\n\t\tfrm.add_custom_button(__('Home Tax Korea'),function(){\n\t\t    \n\t\t    //common_doc.common_doc.doctype.currency_exchange_rate.api.get_calendar \n\t\t    \n            let country_code = frm.selected_doc.country_code;\n            let tax_id = frm.selected_doc.tax_id;\n            \n            frappe.call({\n\t\t\t\tmethod: \"common_doc.common_doc.doctype.currency_exchange_rate.api.get_tax_info\", \n\t\t\t\targs: {\n\t\t\t\t\t'country_code':country_code,\n\t\t\t\t\t'bizno' : tax_id\n\t\t\t\t},\n\t\t\t\tcallback: function(r) {\n\t\t\t\t\tconsole.log(r)\n\t\t\t\t\t//cur_frm.exchange_rate = r.message.exchange_rate;\n\t\t\t\t\tif(r.message) {\n\t\t\t\t\t\tcur_frm.set_value('home_tax_msg',r.message.home_tax_msg);\n\t\t\t\t\t\tcur_frm.set_value('tax_id',r.message.tax_id);\n\t\t\t\t\t\tcur_frm.set_value('taxation_type',r.message.taxation_type);\n\t\t\t\t\t\tcur_frm.set_value('home_tax_date',r.message.home_tax_date);\n\t\t\t\t\t\tcur_frm.set_value('home_tax_yn',r.message.home_tax_yn);\n\t\t\t\t\t\t\n\t\t\t\t\t\treturn;\n\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t})\n\t\t    \n\t\t}, __(\"Get Info from API\")    );\n\t\t}\n\t}\n})",
   "view": "Form"
  },
  {
@@ -46,34 +35,12 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
-  "dt": "Opportunity",
+  "dt": "Supplier",
   "enabled": 1,
-  "modified": "2022-08-30 20:43:30.369084",
-  "module": "Fns Crm Enhancement",
-  "name": "Port Code Validation",
-  "script": "frappe.ui.form.on('Opportunity', {\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n\n})",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Quotation",
-  "enabled": 1,
-  "modified": "2022-08-30 20:59:17.430996",
-  "module": "Fns Crm Enhancement",
-  "name": "Port Code Validation for Quotation",
-  "script": "frappe.ui.form.on('Quotation', {\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n})",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Sales Order",
-  "enabled": 1,
-  "modified": "2022-09-05 17:31:23.437232",
-  "module": "Fns Crm Enhancement",
-  "name": "Port Code Validation for Sales order",
-  "script": "frappe.ui.form.on('Sales Order', {\n\t\n\tonload(frm) {\n\t    cur_frm.fields_dict[\"items\"].grid.get_field(\"pol\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"fdest\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n        cur_frm.fields_dict[\"items\"].grid.get_field(\"pod\").get_query = function(doc) {\n            return {\n                filters: {\n                    'use_yn': 'Y'\n                }\n            }\n        }\n\t}\n})",
+  "modified": "2022-09-13 18:56:17.829589",
+  "module": null,
+  "name": "Supplier Button",
+  "script": "frappe.ui.form.on('Supplier', {\n\trefresh: function(frm) {\n\t\t// your code here\n\t\tif (frm.selected_doc.country_code == 'KR' ||  frm.selected_doc.country_code == 'kr'){\n\t\tfrm.add_custom_button(__('Home Tax Korea'),function(){\n\t\t    \n\t\t    //common_doc.common_doc.doctype.currency_exchange_rate.api.get_calendar \n\t\t    \n            let country_code = frm.selected_doc.country_code;\n            let tax_id = frm.selected_doc.tax_id;\n            \n            frappe.call({\n\t\t\t\tmethod: \"common_doc.common_doc.doctype.currency_exchange_rate.api.get_tax_info\", \n\t\t\t\targs: {\n\t\t\t\t\t'country_code':country_code,\n\t\t\t\t\t'bizno' : tax_id\n\t\t\t\t},\n\t\t\t\tcallback: function(r) {\n\t\t\t\t\tconsole.log(r)\n\t\t\t\t\t//cur_frm.exchange_rate = r.message.exchange_rate;\n\t\t\t\t\tif(r.message) {\n\t\t\t\t\t\tcur_frm.set_value('home_tax_msg',r.message.home_tax_msg);\n\t\t\t\t\t\tcur_frm.set_value('tax_id',r.message.tax_id);\n\t\t\t\t\t\tcur_frm.set_value('taxation_type',r.message.taxation_type);\n\t\t\t\t\t\tcur_frm.set_value('home_tax_date',r.message.home_tax_date);\n\t\t\t\t\t\tcur_frm.set_value('home_tax_yn',r.message.home_tax_yn);\n\t\t\t\t\t\t\n\t\t\t\t\t\treturn;\n\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t})\n\t\t    \n\t\t}, __(\"Get Info from API\")    );\n\t\t}\n\t}\n})",
   "view": "Form"
  }
 ]

@@ -180,5 +180,14 @@ user_data_fields = [
 # 	"common_doc.auth.validate"
 # ]
 fixtures=[
-    "Client Script"	
+	 {"dt": "Client Script", "filters": [
+        [
+            "name", "in", [
+                "Supplier Button",
+                "Customer Button",
+				"Get Holiday API",
+				"Address translate"
+            ]
+        ]
+    ]}
 ]
