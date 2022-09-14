@@ -812,9 +812,94 @@ def get_tax_info(**args):
 			customer_doc.tax_id = res['data'][0]['b_no']
 			# customer_doc.taxation_type = json.dumps(res['data'][0]['tax_type'],ensure_ascii=False)
 			customer_doc.taxation_type = res['data'][0]['tax_type'] 
-			customer_doc.home_tax_date = yyyymmdd
+			if res['data'][0]['tax_type_cd'] == '3':
+				customer_doc.home_tax_date = res['data'][0]['end_dt'] 
+				customer_doc.disabled = 1
+			else:
+				customer_doc.home_tax_date = yyyymmdd
 			# customer_doc.home_tax_yn = json.dumps(res['data'][0]['utcc_yn'],ensure_ascii=False)
 			customer_doc.home_tax_yn =  res['data'][0]['utcc_yn']
 
 
 	return customer_doc
+
+@frappe.whitelist()
+def get_tax_info_batch():
+	# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.get_tax_info_batch
+
+	x = datetime.now()
+	x_str = str(x)
+	yyyymmdd = x_str[0:10]
+	yyyy = x_str[0:4]
+	mm = x_str[5:7]
+	dd = x_str[8:10]
+	customerlist = frappe.db.get_list('Customer',
+		filters={
+			'country': 'Korea, Republic of',
+			'disabled': 0,
+			'taxation_type':['!=','국세청에 등록되지 않은 사업자등록번호입니다.'],
+			'home_tax_date' :['<',yyyy+'-'+mm+'-'+dd]
+		},
+		fields=['name', 'tax_id'],
+		order_by='name desc',
+		page_length=100
+	)
+	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
+	with open(secrets_file) as f:
+		secrets = json.load(f)
+	public_data_bizno_key = secrets["public_data_bizno"]
+	tax_array =[]
+	customer_array =[]
+	url = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey="+public_data_bizno_key+"&dataType=JSON"
+	for customer_ko in customerlist:
+		# print(customer_ko.tax_id)
+		tax_array.append( re.sub("\-", "", customer_ko.tax_id) )
+		customer_array.append(customer_ko.name)
+		frappe.db.set_value('Customer', customer_ko.name, 'tax_id', re.sub("\-", "", customer_ko.tax_id))
+	# tax_json = str(tax_array)
+	jsobj={"b_no":""}
+	jsobj["b_no"] = tax_array
+	
+	# print(json.dumps(jsobj))
+	
+	headers = {
+		'contentType': 'application/json',
+		'accept': 'application/json',
+		'Content-Type': 'application/json'
+		}
+
+	response = requests.request("POST", url, headers=headers, data=json.dumps(jsobj))
+	# print(response)
+	if (response.status_code == 200):
+		res = json.loads(response.content)
+		# print(res)
+		for resp in res['data']:
+			cust_doc_name = frappe.db.get_value('Customer', {'tax_id':resp['b_no']} ,'name')
+			# print(cust_doc_name)
+			cust_doc = frappe.get_doc('Customer',cust_doc_name)
+			cust_doc.home_tax_msg = resp['b_stt']
+			cust_doc.tax_id = resp['b_no']
+			cust_doc.taxation_type = resp['tax_type'] 
+			if resp['tax_type_cd'] == '3':
+				cust_doc.home_tax_date = resp['end_dt'] 
+				cust_doc.disabled = 1
+			else:
+				cust_doc.home_tax_date = yyyymmdd
+			cust_doc.home_tax_yn = resp['utcc_yn']
+			cust_doc.save(
+				ignore_permissions=True, # ignore write permissions during insert
+				ignore_version=True # do not create a version record
+			)
+
+
+			
+
+	# 	customer_doc = frappe.new_doc('Customer')
+	# 	customer_doc.home_tax_msg = res['data'][0]['b_stt']
+	# 	customer_doc.tax_id = res['data'][0]['b_no']
+	# 	customer_doc.taxation_type = res['data'][0]['tax_type'] 
+	# 	customer_doc.home_tax_date = yyyymmdd
+	# 	customer_doc.home_tax_yn =  res['data'][0]['utcc_yn']
+
+
+	# return True
