@@ -812,9 +812,14 @@ def get_tax_info(**args):
 			customer_doc.tax_id = res['data'][0]['b_no']
 			# customer_doc.taxation_type = json.dumps(res['data'][0]['tax_type'],ensure_ascii=False)
 			customer_doc.taxation_type = res['data'][0]['tax_type'] 
-			customer_doc.home_tax_date = yyyymmdd
+			if res['data'][0]['b_stt_cd'] == '03':
+				customer_doc.home_tax_date = res['data'][0]['end_dt'] 
+				customer_doc.disabled = 1
+			else:
+				customer_doc.home_tax_date = yyyymmdd
 			# customer_doc.home_tax_yn = json.dumps(res['data'][0]['utcc_yn'],ensure_ascii=False)
 			customer_doc.home_tax_yn =  res['data'][0]['utcc_yn']
+			
 
 
 	return customer_doc

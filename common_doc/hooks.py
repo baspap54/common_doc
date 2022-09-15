@@ -120,6 +120,12 @@ scheduler_events = {
 	"cron": {
 		"50 08 * * *": [
 			"common_doc.tasks.cron"
+		],
+		"50 23 * * *": [
+			"common_doc.tasks.cron_us"  #LA local time 08:50 KEB bank 
+		],
+		"30 20 * * *": [
+			"common_doc.tasks.cron_ca"  #canada local time 16:30 bankofcanada 
 		]
 	}
 }

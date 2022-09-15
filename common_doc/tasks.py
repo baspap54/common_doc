@@ -37,18 +37,46 @@ def monthly():
 
 def cron():
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-	x = datetime.now()
-
-	date = str(x)
+	today = datetime.today()
+	yesterday = datetime.today() - timedelta(1)
 	# print("Background job Exchange Rate is started")
 
 	ex_exists = frappe.db.exists({
 		'doctype': 'Currency Exchange Rate',
-		'date': date,
+		'date': today.strftime('%Y-%m-%d'),
 		'to_currency': 'KRW'
 	})
 	
 	if not ex_exists:
-		common_doc.common_doc.doctype.currency_exchange_rate.api.get_exchange_rate_all(exchange_date=date)
+		common_doc.common_doc.doctype.currency_exchange_rate.api.get_exchange_rate_all(exchange_date=today.strftime('%Y-%m-%d'))
 		# common_doc.tasks.cron
-		
+
+def cron_ca():
+	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+	today = datetime.today()
+	yesterday = datetime.today() - timedelta(1)
+	# print("Background job Exchange Rate is started")
+
+
+	caex_exists = frappe.db.exists({
+		'doctype': 'Currency Exchange',
+		'date': yesterday.strftime('%Y-%m-%d'),
+		'to_currency': 'CAD'
+	})
+	if not caex_exists:
+		common_doc.common_doc.doctype.currency_exchange_rate.api.import_canada_exchange_rate(exchange_date=yesterday.strftime('%Y-%m-%d'))
+def cron_us():
+	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+	today = datetime.today() + timedelta(1)
+	yesterday = datetime.today() - timedelta(1)
+	# print("Background job Exchange Rate is started")
+
+	ex_exists = frappe.db.exists({
+		'doctype': 'Currency Exchange Rate',
+		'date': today.strftime('%Y-%m-%d'),
+		'to_currency': 'KRW'
+	})
+	
+	if not ex_exists:
+		common_doc.common_doc.doctype.currency_exchange_rate.api.get_exchange_rate_all(exchange_date=today.strftime('%Y-%m-%d'))
+		# common_doc.tasks.cron
