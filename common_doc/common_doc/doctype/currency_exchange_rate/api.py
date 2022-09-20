@@ -824,6 +824,8 @@ def get_tax_info(**args):
 
 	return customer_doc
 
+
+
 @frappe.whitelist()
 def get_tax_info_batch():
 	# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.get_tax_info_batch
