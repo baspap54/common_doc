@@ -15,10 +15,9 @@ common_doc.egg-info/dependency_links.txt
 common_doc.egg-info/not-zip-safe
 common_doc.egg-info/top_level.txt
 common_doc/common_doc/__init__.py
+common_doc/common_doc/registIssue.py
 common_doc/common_doc/custom/allowed_to_transact_with.json
 common_doc/common_doc/custom/country.json
-common_doc/common_doc/custom/customer.json
-common_doc/common_doc/custom/customer_credit_limit.json
 common_doc/common_doc/custom/item.json
 common_doc/common_doc/custom/item_barcode.json
 common_doc/common_doc/custom/item_customer_detail.json

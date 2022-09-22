@@ -893,10 +893,6 @@ def get_tax_info_batch():
 				ignore_permissions=True, # ignore write permissions during insert
 				ignore_version=True # do not create a version record
 			)
-
-
-			
-
 	# 	customer_doc = frappe.new_doc('Customer')
 	# 	customer_doc.home_tax_msg = res['data'][0]['b_stt']
 	# 	customer_doc.tax_id = res['data'][0]['b_no']
