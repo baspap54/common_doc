@@ -15,7 +15,6 @@ common_doc.egg-info/dependency_links.txt
 common_doc.egg-info/not-zip-safe
 common_doc.egg-info/top_level.txt
 common_doc/common_doc/__init__.py
-common_doc/common_doc/registIssue.py
 common_doc/common_doc/custom/allowed_to_transact_with.json
 common_doc/common_doc/custom/country.json
 common_doc/common_doc/custom/item.json
@@ -63,6 +62,17 @@ common_doc/common_doc/doctype/port_code/port_code.js
 common_doc/common_doc/doctype/port_code/port_code.json
 common_doc/common_doc/doctype/port_code/port_code.py
 common_doc/common_doc/doctype/port_code/test_port_code.py
+common_doc/common_doc/doctype/postal_code/__init__.py
+common_doc/common_doc/doctype/postal_code/api.py
+common_doc/common_doc/doctype/postal_code/postal_code.js
+common_doc/common_doc/doctype/postal_code/postal_code.json
+common_doc/common_doc/doctype/postal_code/postal_code.py
+common_doc/common_doc/doctype/postal_code/test_postal_code.py
+common_doc/common_doc/doctype/sub_division/__init__.py
+common_doc/common_doc/doctype/sub_division/sub_division.js
+common_doc/common_doc/doctype/sub_division/sub_division.json
+common_doc/common_doc/doctype/sub_division/sub_division.py
+common_doc/common_doc/doctype/sub_division/test_sub_division.py
 common_doc/common_doctype_/__init__.py
 common_doc/config/__init__.py
 common_doc/config/desktop.py

@@ -192,7 +192,8 @@ fixtures=[
                 "Supplier Button",
                 "Customer Button",
 				"Get Holiday API",
-				"Address translate"
+				"Address translate",
+				"Address Sub Division"
             ]
         ]
     ]}
