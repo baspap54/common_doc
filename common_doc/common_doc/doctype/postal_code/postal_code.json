@@ -21,7 +21,9 @@
   "admin_name3",
   "admin_code3",
   "latitude",
-  "longitude"
+  "longitude",
+  "map_section",
+  "location"
  ],
  "fields": [
   {
@@ -119,11 +121,21 @@
   {
    "fieldname": "column_break_10",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "map_section",
+   "fieldtype": "Section Break",
+   "label": "Map"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Geolocation",
+   "label": "Location"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-08 23:01:20.396087",
+ "modified": "2022-11-16 17:02:37.616397",
  "modified_by": "Administrator",
  "module": "Common Doc",
  "name": "Postal Code",
