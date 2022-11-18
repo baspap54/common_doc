@@ -93,6 +93,7 @@ def get_postal_code(**kwargs):
                         postal_doc.longitude = value
                     if str(key) == "accuracy":
                         postal_doc.accuracy = value
+                postal_doc.location = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":['+str(postal_doc.longitude) +','+str(postal_doc.latitude) +']}}]}'
                 postal_doc.insert(
                         ignore_permissions=True, # ignore write permissions during insert
                         ignore_links=True, # ignore Link validation in the document
