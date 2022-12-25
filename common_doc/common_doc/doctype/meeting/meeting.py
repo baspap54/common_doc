@@ -9,7 +9,7 @@ class Meeting(Document):
 		""""Missing Name"""
 		for attendee in self.attendees:
 			if not attendee.full_name:
-				attendee.full_name = get_full_name(attendee.attendee)
+				attendee.full_name = self.get_full_name(attendee.attendee)
 
 	def get_full_name(attendee):
 		user = frappe.get_doc("User", attendee)

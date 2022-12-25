@@ -1117,3 +1117,43 @@ def get_unlocode_subdivision(**kwargs):
 		# for td_el in list_td:
 		# 	# print(td_el.get_text())
 		# 	print(td_el)
+
+def erpnext_login():
+	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
+	with open(secrets_file) as f:
+		secrets = json.load(f)
+	base_url = secrets['base_url']
+	authorization = secrets['authorization']
+	cookie =secrets['cookie']
+	url = "http://"+base_url+"/api/method/frappe.auth.get_logged_user"
+	payload={}
+	headers = {
+	'Authorization': authorization,
+	'Cookie': cookie
+	}
+	response = requests.request("GET", url, headers=headers, data=payload)
+	print(response.text)
+
+def insert_doc(doc_text,json):
+	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
+	with open(secrets_file) as f:
+		secrets = json.load(f)
+	base_url = secrets['base_url']
+	cookie =secrets['cookie']
+
+	url = "http://"+base_url+"/api/resource/"+doc_text
+
+	payload = json.dumps({
+	"description": "New ToDo",
+	"status": "Open",
+	"priority": "High"
+	})
+	headers = {
+	'Accept': 'application/json',
+	'Content-Type': 'application/json',
+	'Cookie': cookie
+	}
+
+	response = requests.request("POST", url, headers=headers, data=payload)
+
+	print(response.text)
