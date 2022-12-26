@@ -93,6 +93,7 @@ def get_postal_code(**kwargs):
                         postal_doc.longitude = value
                     if str(key) == "accuracy":
                         postal_doc.accuracy = value
+                postal_doc.location = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":['+str(postal_doc.longitude) +','+str(postal_doc.latitude) +']}}]}'
                 postal_doc.insert(
                         ignore_permissions=True, # ignore write permissions during insert
                         ignore_links=True, # ignore Link validation in the document
@@ -172,23 +173,81 @@ def get_admin2_list(country_code,admin_name1):
     return admin2_list
 
 @frappe.whitelist()
-def get_places_list(country_code,admin_name1,admin_name2):
+def get_admin3_list(**args):
     # print(admin_name1)
+    country_code = args.get('country_code')
+    admin_name1 = args.get('admin_name1')
+    admin_name2 = args.get('admin_name2')
+    lv_filters = {}
+    if country_code:
+        lv_filters['country_code'] = country_code
+    if admin_name1:
+        lv_filters['admin_name1'] = admin_name1
+    if admin_name2:
+        lv_filters['admin_name2'] = admin_name2
+    admin3_list = frappe.db.get_list('Postal Code',
+        fields=['count(name) as count', 'admin_name3','admin_code3'],
+        filters=lv_filters,
+        group_by='admin_name3',
+        order_by='admin_name3'
+    )
+    # for admin2 in admin2_list:
+    #     print(admin2)
+    return admin3_list
+
+@frappe.whitelist()
+def get_places_list(**args):
+    # print(admin_name1)
+    country_code = args.get('country_code')
+    admin_name1 = args.get('admin_name1')
+    admin_name2 = args.get('admin_name2')
+    admin_name3 = args.get('admin_name3')
+    lv_filters = {}
+    if country_code:
+        lv_filters['country_code'] = country_code
+    if admin_name1:
+        lv_filters['admin_name1'] = admin_name1
+    if admin_name2:
+        lv_filters['admin_name2'] = admin_name2
+    if admin_name3:
+        lv_filters['admin_name3'] = admin_name3
+
+    # print(lv_filters)
+
     places_list = frappe.db.get_list('Postal Code',
         fields=[ 'place_name'],
-        filters={'country_code':country_code,'admin_name1':admin_name1,'admin_name2':admin_name2},
+        filters=lv_filters,
         group_by='place_name',
         order_by='place_name'
     )
     # for place in places_list:
     #     print(place)
     return places_list
+
 @frappe.whitelist()
-def get_zip_list(country_code,admin_name1,admin_name2,place_name):
+def get_zip_list(**args):
     # print(admin_name1)
+    country_code = args.get('country_code')
+    admin_name1 = args.get('admin_name1')
+    admin_name2 = args.get('admin_name2')
+    admin_name3 = args.get('admin_name3')
+    place_name = args.get('place_name')
+    lv_filters = {}
+    if country_code:
+        lv_filters['country_code'] = country_code
+    if admin_name1:
+        lv_filters['admin_name1'] = admin_name1
+    if admin_name2:
+        lv_filters['admin_name2'] = admin_name2
+    if admin_name3:
+        lv_filters['admin_name3'] = admin_name3
+    if place_name:
+        lv_filters['place_name'] = place_name
+    print(lv_filters)
+
     zip_list = frappe.db.get_list('Postal Code',
         fields=[ 'postal_code','name'],
-        filters={'country_code':country_code,'admin_name1':admin_name1,'admin_name2':admin_name2,'place_name':place_name}
+        filters=lv_filters
     )
     # for place in zip_list:
     #     print(place)

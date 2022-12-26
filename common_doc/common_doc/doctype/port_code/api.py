@@ -1,21 +1,9 @@
 from __future__ import unicode_literals
 from email import header
 
-import locale
 import frappe
-import random
-import string
 import requests
-import subprocess
-import json
-import os
 from bs4 import BeautifulSoup
-# from pyproj import Proj,transform
-from datetime import datetime ,timedelta
-import time
-import requests
-import urllib.request
-import re
 
 
 # bench execute common_doc.common_doc.doctype.port_code.api.get_unlocode_port --kwargs "{'country_cd':'us'}"
