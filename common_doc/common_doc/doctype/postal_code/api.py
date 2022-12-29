@@ -243,7 +243,7 @@ def get_zip_list(**args):
         lv_filters['admin_name3'] = admin_name3
     if place_name:
         lv_filters['place_name'] = place_name
-    print(lv_filters)
+    # print(lv_filters)
 
     zip_list = frappe.db.get_list('Postal Code',
         fields=[ 'postal_code','name'],
@@ -252,5 +252,4 @@ def get_zip_list(**args):
     # for place in zip_list:
     #     print(place)
     return zip_list
-
 # bench execute common_doc.common_doc.doctype.postal_code.api.get_admin1_list --kwargs "{'country_code':'US'}"
