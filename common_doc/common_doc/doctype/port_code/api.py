@@ -5,7 +5,6 @@ import frappe
 import requests
 from bs4 import BeautifulSoup
 
-
 # bench execute common_doc.common_doc.doctype.port_code.api.get_unlocode_port --kwargs "{'country_cd':'us'}"
 
 @frappe.whitelist()

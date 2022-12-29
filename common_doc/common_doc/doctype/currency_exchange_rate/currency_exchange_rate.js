@@ -89,4 +89,3 @@ frappe.ui.form.on('Currency Exchange Rate', {
 
      }
 });
-
