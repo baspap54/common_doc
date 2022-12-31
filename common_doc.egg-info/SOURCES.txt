@@ -18,6 +18,7 @@ common_doc/common_doc/__init__.py
 common_doc/common_doc/custom/address.json
 common_doc/common_doc/custom/allowed_to_transact_with.json
 common_doc/common_doc/custom/country.json
+common_doc/common_doc/custom/holiday_list.json
 common_doc/common_doc/custom/item.json
 common_doc/common_doc/custom/item_barcode.json
 common_doc/common_doc/custom/item_customer_detail.json
