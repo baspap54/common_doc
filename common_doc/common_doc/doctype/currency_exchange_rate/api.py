@@ -13,8 +13,6 @@ from bs4 import BeautifulSoup
 # from pyproj import Proj,transform
 from datetime import datetime ,timedelta
 import time
-import requests
-import urllib.request
 import re
 # import pandas as pd
 

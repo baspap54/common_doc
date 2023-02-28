@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-02-26 20:25:12.328193",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cntr",
+  "mbl",
+  "status",
+  "eta",
+  "port",
+  "status_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "mbl",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "MBL"
+  },
+  {
+   "fieldname": "cntr",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "CNTR",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Status"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "ETA"
+  },
+  {
+   "fieldname": "port",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "PORT"
+  },
+  {
+   "fieldname": "status_date",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Status Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-02-26 22:54:53.484102",
+ "modified_by": "Administrator",
+ "module": "Common Doc",
+ "name": "Shipment Link Detail EG",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
