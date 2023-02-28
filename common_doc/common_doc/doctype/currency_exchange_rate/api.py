@@ -608,8 +608,8 @@ def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , fr_cu
 
 # bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.import_canada_exchange_rate --kwargs "{'exchange_date':'2017-01-03'}"
 @frappe.whitelist()
-def import_canada_exchange_rate(**kwargs):
-	exchange_date = kwargs.get('exchange_date')
+def import_canada_exchange_rate(**args):
+	exchange_date = args.get('exchange_date')
 	locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 	if not exchange_date:
 		x = datetime.now()
@@ -959,8 +959,9 @@ def get_unlocode_subdivision(**kwargs):
 					ignore_mandatory=True 
 				) 
 # bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.create_mx_exchange --kwargs "{'exchange_date':'2022-08-25'}"
-def create_mx_exchange(**kwargs):
-	exchange_date = kwargs.get('exchange_date')
+@frappe.whitelist()
+def create_mx_exchange(**args):
+	exchange_date = args.get('exchange_date')
 	if not exchange_date:
 		# exchg_dt = add_days(getdate(today()),-1)
 		exchg_dt = getdate(today())

@@ -96,4 +96,3 @@ def cron_us():
 	})
 	if not mx_ex_exists:
 		common_doc.common_doc.doctype.currency_exchange_rate.api.create_mx_exchange()
-		# common_doc.tasks.cron

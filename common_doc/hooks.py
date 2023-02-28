@@ -193,7 +193,8 @@ fixtures=[
                 "Customer Button",
 				"Get Holiday API",
 				"Address translate",
-				"Address Sub Division"
+				"Address Sub Division",
+				"Currency Exchange"
             ]
         ]
     ]}
