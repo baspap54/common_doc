@@ -14,7 +14,22 @@ from bs4 import BeautifulSoup
 from datetime import datetime ,timedelta
 import time
 import re
+from urllib import parse
 # import pandas as pd
+from frappe.utils import (
+	add_days,
+	add_months,
+	cint,
+	date_diff,
+	flt,
+	get_datetime,
+	get_last_day,
+	getdate,
+	month_diff,
+	nowdate,
+	today,
+	get_normalized_weekday_index,
+	)
 
 def random_string(string_length=8):
 	letters = string.ascii_lowercase
@@ -591,7 +606,7 @@ def create_currency_exchange_rate(currency_exchange_rate_type ,curr_date , fr_cu
 		exchange_doc.usd_rate = usd_rate
 		exchange_doc.insert()
 
-# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.import_canada_exchange_rate --kwargs "{'exchange_date':'2022-08-25'}"
+# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.import_canada_exchange_rate --kwargs "{'exchange_date':'2017-01-03'}"
 @frappe.whitelist()
 def import_canada_exchange_rate(**kwargs):
 	exchange_date = kwargs.get('exchange_date')
@@ -618,7 +633,16 @@ def read_exchange_rate(date):
 			for ex_key in exchange_data.keys():
 				if ex_key != 'd':
 					# print(ex_key[-6:][0:3]+exchange_data[ex_key]['v'])
-					create_exchange_rate(exchange_data['d'], ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
+					exchg_dt  = getdate(exchange_data['d'])
+					exchg_date = add_days(exchg_dt, 1)
+					if get_normalized_weekday_index(exchg_dt) == 4:  # 목요일 환율일 경우 금토일 환율 입력
+						create_exchange_rate(add_days(exchg_dt, 1), ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
+						create_exchange_rate(add_days(exchg_dt, 2), ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
+						create_exchange_rate(add_days(exchg_dt, 3), ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
+					elif get_normalized_weekday_index(exchg_dt) == 5: # 금요일 환율은 월요일로 환율 입력
+						create_exchange_rate(add_days(exchg_dt, 3), ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
+					else: #월요일 -> 화요일 , 화요일 ->수요일 , 수요일 -> 목요일 로 입력
+						create_exchange_rate(exchg_date, ex_key[-6:][0:3],'CAD' ,exchange_data[ex_key]['v'])
 
 		# print(data)
 
@@ -934,187 +958,43 @@ def get_unlocode_subdivision(**kwargs):
 					ignore_if_duplicate=True, # dont insert if DuplicateEntryError is thrown
 					ignore_mandatory=True 
 				) 
+# bench execute common_doc.common_doc.doctype.currency_exchange_rate.api.create_mx_exchange --kwargs "{'exchange_date':'2022-08-25'}"
+def create_mx_exchange(**kwargs):
+	exchange_date = kwargs.get('exchange_date')
+	if not exchange_date:
+		# exchg_dt = add_days(getdate(today()),-1)
+		exchg_dt = getdate(today())
+	else:
+		exchg_dt = getdate(exchange_date)
+	# print(exchg_dt.strftime("%d/%m/%Y"))
+	from_dt = getdate(exchg_dt)
+	to_dt = add_days(getdate(today()),1)
+	url = 'https://dof.gob.mx/indicadores_detalle.php?'
+	params = {'cod_tipo_indicador':'158','dfecha':from_dt.strftime("%d/%m/%Y"),'hfecha':to_dt.strftime("%d/%m/%Y")}
+	# print(params)
+	# print(url+parse.urlencode(params))
+	# print(url+urllib.urlencode(params))
+	res = requests.get(url+parse.urlencode(params),verify=False)
+	html = res.content
+	soup = BeautifulSoup(html, 'html.parser')
+	list_tables = soup.find_all(name='table', attrs={"class": "Tabla_borde","style":"border:1px solid #b2b2b2"})
+	# if len(list_tables)>0:
+	for list_table in list_tables:
+		if len(list_table.find_all(name='tr'))>1:
+			# list_trs = list_table.find_all(name='tr',attrs={"class": "Celda 1"})
+			# for tr in list_trs:
+			# 	print(tr.text.strip())
+			list_trs = list_table.find_all(name='tr',attrs={"class": "Celda 1"})
+			for tr in list_trs:
+				list_tds = tr.find_all(name='td',attrs={"class": "txt"})
+				# print(list_tds[0].text.strip())
+				# print(list_tds[1].text.strip())
+				# print(list_tds[0].text.strip())
+				# print(datetime.strptime(list_tds[0].text.strip(), "%d-%m-%Y").date())
+				create_exchange_rate(datetime.strptime(list_tds[0].text.strip(), "%d-%m-%Y").date(), 'USD','MXN' ,flt(list_tds[1].text.strip()))
+				# for td in list_tds:
+				# 	print(td.text.strip())
 
-		# if len(list_td)==11 and list_td[0].get_text() != 'Ch' and list_td[1].text.strip()[4:7] != '':
-		# 	if frappe.db.exists('Sub Division',(list_td[1].get_text())[0:2]+(list_td[1].get_text())[4:7]):
-		# 		port_doc = frappe.get_doc('Sub Division' ,(list_td[1].get_text())[0:2]+(list_td[1].get_text())[4:7])
-
-		# 		port_doc.port_name = list_td[2].get_text()
-		# 		port_doc.iata = list_td[8].text.strip()
-		# 		port_doc.sub_div = list_td[4].text.strip()
-		# 		if list_td[4].text.strip() != '':
-		# 			port_doc.title = (list_td[1].get_text())[0:2]+(list_td[1].get_text())[4:7]+'/'+list_td[2].get_text()+'/'+list_td[4].text.strip()
-		# 		else:
-		# 			port_doc.title = (list_td[1].get_text())[0:2]+(list_td[1].get_text())[4:7]+'/'+list_td[2].get_text()
-
-		# 		if list_td[5].get_text()[0:1] == '1':	
-		# 			port_doc.sea_port = 1
-		# 		else:
-		# 			port_doc.sea_port = 0
-				
-		# 		if list_td[5].get_text()[1:2] == '2':
-		# 			port_doc.rail_terminal = 1
-		# 		else:
-		# 			port_doc.rail_terminal = 0
-
-		# 		if list_td[5].get_text()[2:3] == '3':
-		# 			port_doc.road_terminal = 1
-		# 		else:
-		# 			port_doc.road_terminal = 0
-
-		# 		if list_td[5].get_text()[3:4] == '4':
-		# 			port_doc.airport = 1
-		# 		else:
-		# 			port_doc.airport = 0
-
-		# 		if list_td[5].get_text()[4:5] == '5':
-		# 			port_doc.postal_exchange_office = 1
-		# 		else:
-		# 			port_doc.postal_exchange_office = 0
-
-		# 		if list_td[5].get_text()[5:6] == '6':
-		# 			port_doc.mulitmodal_functions = 1
-		# 		else:
-		# 			port_doc.mulitmodal_functions = 0
-
-		# 		if list_td[5].get_text()[6:7] == '7':
-		# 			port_doc.fixed_transport_functions = 1
-		# 		else:
-		# 			port_doc.fixed_transport_functions = 0
-
-		# 		if list_td[5].get_text()[7:8] == 'B':
-		# 			port_doc.border_crossing = 1
-		# 		else:
-		# 			port_doc.border_crossing = 0
-
-		# 		port_doc.status = list_td[6].get_text()
-		# 		port_doc.iata = list_td[8].text.strip()
-
-		# 		if list_td[6].get_text()[0:1] == 'A':
-		# 			port_doc.use_yn ='Y'
-		# 		else:
-		# 			port_doc.use_yn ='N'
-		# 		port_doc.description = list_td[10].get_text()
-		# 		port_doc.country = frappe.db.get_value('Country',{'code':list_td[1].get_text()[0:2]},'country_name')
-		# 		Latitude = 0.000
-		# 		Longitude = 0.000
-		# 		port_doc.coordinates = list_td[9].text.strip()
-		# 		if list_td[9].text.strip() != '':
-		# 			# print("["+list_td[9].get_text()+"]") 
-		# 			Latitude_minute = int(list_td[9].get_text()[2:4])
-		# 			Longitude_minute = int(list_td[9].get_text()[9:11])
-		# 			Latitude_degree = int(list_td[9].get_text()[0:2])
-		# 			Longitude_degree = int(list_td[9].get_text()[6:9])
-		# 			Latitude =  Latitude_degree 
-		# 			Longitude = Longitude_degree
-		# 			if Latitude_minute >0 :
-		# 				Latitude += Latitude_minute/60
-		# 			if list_td[9].get_text()[4:5] == 'S':
-		# 				Latitude = Latitude *(-1)
-		# 			if Longitude_minute >0 :
-		# 				Longitude += Longitude_minute/60
-		# 			if list_td[9].get_text()[11:12] =='W':
-		# 				Longitude = Longitude * (-1)
-
-		# 			port_doc.location = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":['+str(Longitude) +','+str(Latitude) +']}}]}'
-		# 		port_doc.latitude = Latitude
-		# 		port_doc.longitude = Longitude
-		# 		port_doc.save()
-
-		# 	else:
-		# 		port_doc = frappe.new_doc('Port Code')
-		# 		port_doc.country_code = (list_td[1].get_text())[0:2]
-		# 		port_doc.port_code = (list_td[1].get_text())[4:7]
-		# 		port_doc.port_name = list_td[2].get_text()
-		# 		port_doc.iata = list_td[8].text.strip()
-		# 		port_doc.sub_div = list_td[4].text.strip()
-		# 		if list_td[4].text.strip() != '':
-		# 			port_doc.title = (list_td[1].get_text())[0:2]+(list_td[1].get_text())[4:7]+'/'+list_td[2].get_text()+'/'+list_td[4].text.strip()
-		# 		else:
-		# 			port_doc.title = (list_td[1].get_text())[0:2]+(list_td[1].get_text())[4:7]+'/'+list_td[2].get_text()
-		# 		if list_td[5].get_text()[0:1] == '1':	
-		# 			port_doc.sea_port = 1
-		# 		else:
-		# 			port_doc.sea_port = 0
-				
-		# 		if list_td[5].get_text()[1:2] == '2':
-		# 			port_doc.rail_terminal = 1
-		# 		else:
-		# 			port_doc.rail_terminal = 0
-
-		# 		if list_td[5].get_text()[2:3] == '3':
-		# 			port_doc.road_terminal = 1
-		# 		else:
-		# 			port_doc.road_terminal = 0
-
-		# 		if list_td[5].get_text()[3:4] == '4':
-		# 			port_doc.airport = 1
-		# 		else:
-		# 			port_doc.airport = 0
-
-		# 		if list_td[5].get_text()[4:5] == '5':
-		# 			port_doc.postal_exchange_office = 1
-		# 		else:
-		# 			port_doc.postal_exchange_office = 0
-
-		# 		if list_td[5].get_text()[5:6] == '6':
-		# 			port_doc.mulitmodal_functions = 1
-		# 		else:
-		# 			port_doc.mulitmodal_functions = 0
-
-		# 		if list_td[5].get_text()[6:7] == '7':
-		# 			port_doc.fixed_transport_functions = 1
-		# 		else:
-		# 			port_doc.fixed_transport_functions = 0
-
-		# 		if list_td[5].get_text()[7:8] == 'B':
-		# 			port_doc.border_crossing = 1
-		# 		else:
-		# 			port_doc.border_crossing = 0
-
-		# 		port_doc.status = list_td[6].get_text()
-		# 		port_doc.iata = list_td[8].text.strip()
-
-		# 		if list_td[6].get_text()[0:1] == 'A':
-		# 			port_doc.use_yn ='Y'
-		# 		else:
-		# 			port_doc.use_yn ='N'
-		# 		port_doc.description = list_td[10].get_text()
-		# 		port_doc.country = frappe.db.get_value('Country',{'code':list_td[1].get_text()[0:2]},'country_name')
-		# 		Latitude = 0.000
-		# 		Longitude = 0.000
-		# 		port_doc.coordinates = list_td[9].text.strip()
-		# 		if list_td[9].text.strip() != '':
-		# 			# print("["+list_td[9].get_text()+"]") 
-		# 			Latitude_minute = int(list_td[9].get_text()[2:4])
-		# 			Longitude_minute = int(list_td[9].get_text()[9:11])
-		# 			Latitude_degree = int(list_td[9].get_text()[0:2])
-		# 			Longitude_degree = int(list_td[9].get_text()[6:9])
-		# 			Latitude =  Latitude_degree 
-		# 			Longitude = Longitude_degree
-		# 			if Latitude_minute >0 :
-		# 				Latitude += Latitude_minute/60
-		# 			if list_td[9].get_text()[4:5] == 'S':
-		# 				Latitude = Latitude *(-1)
-		# 			if Longitude_minute >0 :
-		# 				Longitude += Longitude_minute/60
-		# 			if list_td[9].get_text()[11:12] =='W':
-		# 				Longitude = Longitude * (-1)
-
-		# 			port_doc.location = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":['+str(Longitude) +','+str(Latitude) +']}}]}'
-		# 		port_doc.latitude = Latitude
-		# 		port_doc.longitude = Longitude
-				
-
-		# 		port_doc.insert(
-		# 			ignore_permissions=True, # ignore write permissions during insert
-		# 			ignore_links=True, # ignore Link validation in the document
-		# 			ignore_if_duplicate=True, # dont insert if DuplicateEntryError is thrown
-		# 			ignore_mandatory=True 
-		# 		) 
-		# for td_el in list_td:
-		# 	# print(td_el.get_text())
-		# 	print(td_el)
 
 def erpnext_login():
 	secrets_file = os.path.join(os.getcwd(), 'secrets.json')
